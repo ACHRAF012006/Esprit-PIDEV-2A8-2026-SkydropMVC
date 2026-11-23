@@ -1,0 +1,9 @@
+RewriteEngine On
+
+# Only index.php, assets/ and uploads/ are reachable from the browser.
+RewriteRule ^(config|controllers|models|views|database)(/|$) - [F,L]
+
+# Clean URLs: every other path goes to index.php.
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^ index.php [QSA,L]

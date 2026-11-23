@@ -1,0 +1,724 @@
+/*
+ * SKYDROP design system (minimal UI). Loaded last, after the template CSS (eLEARNING or TailAdmin) and skydrop.css.
+ * Rules: CLAUDE.md section 5. Component names: .tracking/CONTRACTS.md ("Design system").
+ *
+ * 1. Tokens          5. Front office: navbar and footer
+ * 2. Base            6. Front office: page parts (header, cards, tags, tables, empty states)
+ * 3. Buttons         7. Back offices (TailAdmin overrides)
+ * 4. Forms           8. Motion and accessibility
+ */
+
+/* ---------- 1. Tokens ---------------------------------------------------------------------------------------------- */
+:root {
+    --ds-bg: #fafaf9;
+    --ds-surface: #ffffff;
+    --ds-subtle: #f5f5f4;
+    --ds-border: #e7e5e4;
+    --ds-border-strong: #d6d3d1;
+    --ds-text: #1c1917;
+    --ds-muted: #57534e;
+    --ds-faint: #78716c;
+
+    --ds-navy: #03213d;          /* the one strong colour: primary buttons, navbar, sidebar */
+    --ds-navy-hover: #0b3157;
+    --ds-teal: #21cbae;          /* rare accent: focus ring, link hover, "in stock / open now" */
+    --ds-teal-ink: #0b7a68;      /* teal for text on white (AA) */
+    --ds-teal-soft: #e6f7f3;
+    --ds-danger: #b42318;
+    --ds-danger-soft: #fef3f2;
+    --ds-warn: #92400e;
+    --ds-warn-soft: #fffbeb;
+
+    --ds-font: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --ds-text-sm: 14px;
+    --ds-text-md: 16px;
+    --ds-text-lg: 20px;
+    --ds-text-xl: 28px;
+    --ds-text-2xl: 40px;
+
+    --ds-space-1: 8px;
+    --ds-space-2: 16px;
+    --ds-space-3: 24px;
+    --ds-space-4: 32px;
+    --ds-space-6: 48px;
+    --ds-space-8: 64px;
+
+    --ds-radius: 8px;
+    --ds-ring: 0 0 0 3px rgba(33, 203, 174, .35);
+    --ds-shadow-overlay: 0 8px 24px rgba(28, 25, 23, .08);
+    --ds-ease: cubic-bezier(.2, .8, .2, 1);
+    --ds-fast: 150ms;
+}
+
+/* ---------- 2. Base ------------------------------------------------------------------------------------------------ */
+.office-front {
+    --primary: var(--ds-navy);
+    --dark: var(--ds-text);
+    --light: var(--ds-subtle);
+    --bs-primary: var(--ds-navy);
+    --bs-body-font-family: var(--ds-font);
+    background: var(--ds-bg);
+    color: var(--ds-text);
+    font-family: var(--ds-font);
+    font-size: var(--ds-text-md);
+    line-height: 1.6;
+}
+
+.office-front h1, .office-front h2, .office-front h3, .office-front h4, .office-front h5, .office-front h6,
+.office-front .h1, .office-front .h2, .office-front .h3, .office-front .h4, .office-front .h5, .office-front .h6 {
+    font-family: var(--ds-font);
+    font-weight: 600;
+    color: var(--ds-text);
+    letter-spacing: -0.01em;
+    line-height: 1.25;
+    text-wrap: balance;
+}
+.office-front h1, .office-front .h1 { font-size: var(--ds-text-xl); }
+.office-front h2, .office-front .h2 { font-size: var(--ds-text-lg); }
+.office-front h3, .office-front .h3, .office-front h4, .office-front .h4,
+.office-front h5, .office-front .h5, .office-front h6, .office-front .h6 { font-size: var(--ds-text-md); }
+@media (min-width: 992px) {
+    .office-front h1, .office-front .h1 { font-size: var(--ds-text-2xl); }
+    .office-front h2, .office-front .h2 { font-size: var(--ds-text-xl); }
+    .office-front h3, .office-front .h3 { font-size: var(--ds-text-lg); }
+}
+
+.office-front p, .office-front li { max-width: 70ch; }
+.office-front small, .office-front .small { font-size: var(--ds-text-sm); }
+.office-front strong, .office-front b { font-weight: 600; }
+
+.office-front a { color: var(--ds-navy); text-underline-offset: 3px; transition: color var(--ds-fast) var(--ds-ease); }
+.office-front a:hover { color: var(--ds-teal-ink); }
+
+.office-front .text-primary { color: var(--ds-navy) !important; }
+.office-front .text-muted, .office-front .ds-muted { color: var(--ds-muted) !important; }
+.office-front .bg-light { background: var(--ds-subtle) !important; }
+.office-front .border-primary { border-color: var(--ds-navy) !important; }
+.office-front .tabular, .office-front .ds-num { font-variant-numeric: tabular-nums; }
+
+::selection { background: var(--ds-teal-soft); color: var(--ds-text); }
+html { scrollbar-color: var(--ds-border-strong) transparent; }
+
+.ds-main { padding-top: var(--ds-space-4); padding-bottom: var(--ds-space-4); }
+@media (min-width: 992px) { .ds-main { padding-top: var(--ds-space-6); } }
+
+/* ---------- 3. Buttons --------------------------------------------------------------------------------------------- */
+.office-front .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--ds-space-1);
+    min-height: 44px;
+    padding: 10px 18px;
+    border-radius: var(--ds-radius);
+    font-family: var(--ds-font);
+    font-size: var(--ds-text-md);
+    font-weight: 600;
+    line-height: 1.2;
+    box-shadow: none;
+    transition: background-color var(--ds-fast) var(--ds-ease), border-color var(--ds-fast) var(--ds-ease),
+                color var(--ds-fast) var(--ds-ease);
+}
+.office-front .btn-sm { min-height: 36px; padding: 6px 12px; font-size: var(--ds-text-sm); }
+.office-front .btn-primary,
+.office-front .btn-primary:disabled {
+    background: var(--ds-navy);
+    border: 1px solid var(--ds-navy);
+    color: #fff;
+}
+.office-front .btn-primary:hover, .office-front .btn-primary:focus-visible {
+    background: var(--ds-navy-hover);
+    border-color: var(--ds-navy-hover);
+    color: #fff;
+}
+.office-front .btn-primary:active { background: #021729; border-color: #021729; }
+.office-front .btn-outline-primary, .office-front .btn-light, .office-front .btn-outline {
+    background: var(--ds-surface);
+    border: 1px solid var(--ds-border-strong);
+    color: var(--ds-text);
+}
+.office-front .btn-outline-primary:hover, .office-front .btn-light:hover, .office-front .btn-outline:hover {
+    background: var(--ds-subtle);
+    border-color: var(--ds-faint);
+    color: var(--ds-text);
+}
+.office-front .btn-link {
+    min-height: 44px;
+    padding-inline: 0;
+    background: none;
+    border: 0;
+    color: var(--ds-navy);
+    font-weight: 600;
+    text-decoration: underline;
+    text-decoration-color: var(--ds-border-strong);
+}
+.office-front .btn-link:hover { color: var(--ds-teal-ink); text-decoration-color: currentColor; }
+.office-front .btn-danger-link { color: var(--ds-danger); }
+.office-front .btn-danger-link:hover { color: #8a1a12; }
+.office-front .btn:disabled { opacity: .45; cursor: not-allowed; }
+
+/* ---------- 4. Forms ----------------------------------------------------------------------------------------------- */
+.office-front .form-label, .office-front .ds-label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: var(--ds-text-sm);
+    font-weight: 600;
+    color: var(--ds-text);
+}
+.office-front .form-control, .office-front .form-select {
+    min-height: 44px;
+    border: 1px solid var(--ds-border-strong);
+    border-radius: var(--ds-radius);
+    background-color: var(--ds-surface);
+    color: var(--ds-text);
+    font-size: var(--ds-text-md);
+    box-shadow: none;
+    transition: border-color var(--ds-fast) var(--ds-ease), box-shadow var(--ds-fast) var(--ds-ease);
+}
+.office-front .form-control::placeholder { color: var(--ds-faint); }
+.office-front .form-floating > .form-control::placeholder { color: transparent; }
+.office-front .form-floating > label { color: var(--ds-muted); }
+.office-front .form-control:focus, .office-front .form-select:focus,
+.office-front .form-check-input:focus {
+    border-color: var(--ds-teal-ink);
+    box-shadow: var(--ds-ring);
+}
+.office-front .form-control.is-invalid { border-color: var(--ds-danger); }
+.office-front .invalid-feedback { color: var(--ds-danger); font-size: var(--ds-text-sm); }
+.office-front .form-check-input { width: 1.15em; height: 1.15em; border-color: var(--ds-faint); }
+.office-front .form-check-input:checked { background-color: var(--ds-navy); border-color: var(--ds-navy); }
+.office-front .form-text, .office-front .ds-hint { color: var(--ds-muted); font-size: var(--ds-text-sm); }
+.office-front .input-group > .btn { min-height: 44px; }
+
+/* ---------- 5. Front office: navbar and footer ---------------------------------------------------------------------- */
+.ds-navbar {
+    background: var(--ds-navy);
+    border-bottom: 1px solid #0b3157;
+}
+.ds-navbar .navbar-brand { padding: 10px 0; margin-right: var(--ds-space-3); }
+.ds-navbar .navbar-brand img { height: 40px; width: auto; display: block; }
+.ds-navbar .navbar-nav .nav-link {
+    display: flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 8px 12px !important;
+    margin: 0;
+    color: rgba(255, 255, 255, .78);
+    font-size: 15px;
+    font-weight: 400;
+    text-transform: none;
+    letter-spacing: 0;
+    outline: none;
+    transition: color var(--ds-fast) var(--ds-ease);
+}
+.ds-navbar .navbar-nav .nav-link:hover { color: #fff; }
+.ds-navbar .navbar-nav .nav-link.active {
+    color: #fff;
+    font-weight: 600;
+}
+@media (min-width: 992px) {
+    .ds-navbar .navbar-nav .nav-link { position: relative; }
+    .ds-navbar .navbar-nav .nav-link::after {
+        content: ""; position: absolute; left: 12px; right: 12px; bottom: 0; height: 2px;
+        background: var(--ds-teal); transform: scaleX(0); transform-origin: left center;
+        transition: transform 220ms var(--ds-ease);
+    }
+    .ds-navbar .navbar-nav .nav-link:hover::after { transform: scaleX(.6); }
+    .ds-navbar .navbar-nav .nav-link.active::after { transform: scaleX(1); }
+}
+.ds-navbar .navbar-toggler {
+    min-height: 44px;
+    border: 1px solid rgba(255, 255, 255, .35);
+    border-radius: var(--ds-radius);
+}
+.ds-navbar .navbar-toggler-icon { filter: invert(1) brightness(2); }
+.ds-navbar .ds-nav-action { margin-left: var(--ds-space-2); }
+.ds-navbar .ds-nav-action .btn {
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, .45);
+    color: #fff;
+}
+.ds-navbar .ds-nav-action .btn:hover { background: rgba(255, 255, 255, .08); border-color: #fff; color: #fff; }
+@media (max-width: 991.98px) {
+    .ds-navbar .navbar-collapse { padding: var(--ds-space-1) 0 var(--ds-space-2); border-top: 1px solid #0b3157; }
+    .ds-navbar .navbar-nav .nav-link.active { box-shadow: inset 2px 0 0 var(--ds-teal); }
+    .ds-navbar .ds-nav-action { margin: var(--ds-space-1) 0 0; }
+}
+
+.ds-footer {
+    margin-top: var(--ds-space-8);
+    padding: var(--ds-space-4) 0 var(--ds-space-3);
+    background: var(--ds-surface);
+    border-top: 1px solid var(--ds-border);
+    color: var(--ds-muted);
+    font-size: var(--ds-text-sm);
+}
+.ds-footer h2 { margin: 0 0 var(--ds-space-1); font-size: var(--ds-text-sm); font-weight: 600; color: var(--ds-text); }
+.ds-footer ul { list-style: none; margin: 0; padding: 0; }
+.ds-footer li { margin-bottom: 6px; }
+.ds-footer a { color: var(--ds-muted); text-decoration: none; }
+.ds-footer a:hover { color: var(--ds-navy); text-decoration: underline; }
+.ds-footer .ds-credit { max-width: none; margin-top: var(--ds-space-3); padding-top: var(--ds-space-2); border-top: 1px solid var(--ds-border); color: var(--ds-faint); font-size: 13px; }
+.ds-footer .ds-credit a { color: var(--ds-faint); text-decoration: underline; }
+
+/* ---------- 6. Front office: page parts ----------------------------------------------------------------------------- */
+
+/* Page header: title + breadcrumb, no coloured band. */
+.ds-page-header { padding: var(--ds-space-4) 0 var(--ds-space-3); border-bottom: 1px solid var(--ds-border); background: var(--ds-surface); }
+.ds-page-header h1 { margin: 0; }
+.ds-page-header .breadcrumb { margin: 0 0 var(--ds-space-1); font-size: var(--ds-text-sm); }
+.ds-page-header .breadcrumb a { color: var(--ds-muted); text-decoration: none; }
+.ds-page-header .breadcrumb a:hover { color: var(--ds-navy); text-decoration: underline; }
+.ds-page-header .breadcrumb-item.active { color: var(--ds-text); }
+.ds-page-header .breadcrumb-item + .breadcrumb-item::before { color: var(--ds-faint); }
+.ds-page-header .ds-lead { margin: var(--ds-space-1) 0 0; color: var(--ds-muted); }
+
+/* Sections */
+.ds-section { margin-top: var(--ds-space-6); }
+.ds-section-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: var(--ds-space-1) var(--ds-space-2); margin-bottom: var(--ds-space-2); }
+.ds-section-head h2 { margin: 0; }
+.ds-section-head p { margin: 0; color: var(--ds-muted); }
+
+/* Cards: white, 1px border, 8px radius, no shadow. */
+.ds-card {
+    background: var(--ds-surface);
+    border: 1px solid var(--ds-border);
+    border-radius: var(--ds-radius);
+}
+.ds-card-body { padding: var(--ds-space-3); }
+.ds-card-row { display: flex; flex-direction: column; height: 100%; }
+.office-front .ds-card-title, .ds-card-title { min-width: 0; margin: 0 0 4px; font-size: var(--ds-text-md); font-weight: 600; overflow-wrap: anywhere; }
+.ds-card-title a { color: var(--ds-text); text-decoration: none; }
+.ds-card-title a:hover { color: var(--ds-navy); text-decoration: underline; }
+.ds-card-footer { margin-top: auto; padding: 12px var(--ds-space-3); border-top: 1px solid var(--ds-border); font-size: var(--ds-text-sm); color: var(--ds-muted); }
+a.ds-card { display: block; color: inherit; text-decoration: none; transition: border-color var(--ds-fast) var(--ds-ease); }
+a.ds-card:hover { border-color: var(--ds-faint); color: inherit; }
+
+/* Image or quiet placeholder for products and shops without a photo. */
+.ds-media {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    aspect-ratio: 16 / 9;
+    background: var(--ds-subtle);
+    border-bottom: 1px solid var(--ds-border);
+    border-radius: var(--ds-radius) var(--ds-radius) 0 0;
+    color: var(--ds-faint);
+    font-size: 32px;
+    overflow: hidden;
+}
+.ds-media img { width: 100%; height: 100%; object-fit: cover; }
+.ds-media-lg { aspect-ratio: 4 / 3; border: 1px solid var(--ds-border); border-radius: var(--ds-radius); font-size: 56px; }
+.ds-media-sm { width: 56px; height: 56px; aspect-ratio: auto; flex: 0 0 56px; border: 1px solid var(--ds-border); border-radius: var(--ds-radius); font-size: 22px; }
+
+/* Price and facts */
+.ds-price { font-size: var(--ds-text-lg); font-weight: 600; font-variant-numeric: tabular-nums; color: var(--ds-text); }
+.ds-price small { font-size: var(--ds-text-sm); font-weight: 400; color: var(--ds-muted); }
+.ds-meta { display: flex; flex-wrap: wrap; gap: 4px var(--ds-space-2); margin: 0; padding: 0; list-style: none; color: var(--ds-muted); font-size: var(--ds-text-sm); }
+.ds-meta li { display: inline-flex; align-items: center; gap: 6px; max-width: none; }
+.ds-meta .bi { font-size: 16px; color: var(--ds-faint); }
+
+/* Definition rows (summary panels, product facts). */
+.ds-rows { margin: 0; }
+.ds-rows > div { display: flex; justify-content: space-between; gap: var(--ds-space-2); padding: 8px 0; border-bottom: 1px solid var(--ds-border); }
+.ds-rows > div:last-child { border-bottom: 0; }
+.ds-rows dt { font-weight: 400; color: var(--ds-muted); }
+.ds-rows dd { min-width: 0; overflow-wrap: anywhere; margin: 0; text-align: right; font-variant-numeric: tabular-nums; }
+.ds-rows .ds-total dt, .ds-rows .ds-total dd { color: var(--ds-text); font-weight: 600; font-size: var(--ds-text-lg); }
+
+/* Tags (badges). Status never relies on colour alone: the text says it. */
+.ds-tag, .office-front .simulation-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 1px 8px;
+    border: 1px solid var(--ds-border-strong);
+    border-radius: 999px;
+    background: var(--ds-surface);
+    color: var(--ds-muted);
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.6;
+    white-space: nowrap;
+    vertical-align: middle;
+}
+.ds-tag-ok { border-color: #9ad9cc; background: var(--ds-teal-soft); color: var(--ds-teal-ink); }
+.ds-tag-warn { border-color: #f5d08a; background: var(--ds-warn-soft); color: var(--ds-warn); }
+.ds-tag-danger { border-color: #f4b4ae; background: var(--ds-danger-soft); color: var(--ds-danger); }
+.ds-tag-muted { background: var(--ds-subtle); }
+
+/* Sample-data note: quiet, one line, not a yellow alert. */
+.ds-note, .office-front .alert-warning {
+    display: block;
+    max-width: none;
+    margin-bottom: var(--ds-space-3);
+    padding: 10px 14px;
+    border: 1px dashed var(--ds-border-strong);
+    border-radius: var(--ds-radius);
+    background: transparent;
+    color: var(--ds-muted);
+    font-size: var(--ds-text-sm);
+}
+.ds-note strong { color: var(--ds-text); margin-right: 4px; }
+.office-front .alert-success { border-radius: var(--ds-radius); border: 1px solid #9ad9cc; background: var(--ds-teal-soft); color: #075e50; }
+.office-front .alert-danger { border-radius: var(--ds-radius); border: 1px solid #f4b4ae; background: var(--ds-danger-soft); color: #8a1a12; }
+
+/* Tables */
+.ds-table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+.ds-table th { padding: 10px 12px; border-bottom: 1px solid var(--ds-border); color: var(--ds-muted); font-size: var(--ds-text-sm); font-weight: 600; text-align: left; }
+.ds-table td { padding: 12px; border-bottom: 1px solid var(--ds-border); vertical-align: middle; }
+.ds-table tr:last-child td { border-bottom: 0; }
+.ds-table .ds-right { text-align: right; }
+
+/* Empty states */
+.ds-empty { padding: var(--ds-space-6) var(--ds-space-3); text-align: center; border: 1px dashed var(--ds-border-strong); border-radius: var(--ds-radius); background: var(--ds-surface); }
+.ds-empty h2 { font-size: var(--ds-text-lg); margin-bottom: var(--ds-space-1); }
+.ds-empty p { margin: 0 auto var(--ds-space-2); color: var(--ds-muted); }
+
+/* Choice list (checkout modes): radio rows, not tiles. */
+.ds-choice-list { display: grid; gap: var(--ds-space-1); margin: 0; padding: 0; border: 0; }
+.ds-choice {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    gap: 4px var(--ds-space-2);
+    align-items: center;
+    min-height: 64px;
+    padding: 14px var(--ds-space-2);
+    background: var(--ds-surface);
+    border: 1px solid var(--ds-border);
+    border-radius: var(--ds-radius);
+    cursor: pointer;
+    transition: border-color var(--ds-fast) var(--ds-ease);
+}
+.ds-choice:hover { border-color: var(--ds-faint); }
+.ds-choice:has(input:checked) { border-color: var(--ds-navy); box-shadow: inset 0 0 0 1px var(--ds-navy); }
+.ds-choice.is-disabled { cursor: not-allowed; background: var(--ds-subtle); }
+.ds-choice.is-disabled .ds-choice-title { color: var(--ds-muted); }
+.ds-choice-title { min-width: 0; overflow-wrap: anywhere; display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; font-weight: 600; }
+.ds-choice-detail { grid-column: 2 / 4; color: var(--ds-muted); font-size: var(--ds-text-sm); }
+.ds-choice-detail.is-reason { color: var(--ds-danger); }
+.ds-choice-fee { font-variant-numeric: tabular-nums; font-weight: 600; white-space: nowrap; }
+
+/* Map boxes */
+.office-front .map-picker, .ds-map { height: 360px; border: 1px solid var(--ds-border); border-radius: var(--ds-radius); }
+.ds-map-tall { height: 480px; }
+@media (max-width: 575.98px) { .ds-map-tall { height: 320px; } }
+
+/* Home search */
+.ds-hero { padding: var(--ds-space-6) 0 var(--ds-space-4); }
+.ds-hero h1 { max-width: 20ch; margin-bottom: var(--ds-space-1); }
+.ds-hero p { color: var(--ds-muted); font-size: var(--ds-text-lg); margin-bottom: var(--ds-space-3); }
+.ds-search { display: flex; flex-wrap: wrap; gap: var(--ds-space-1); max-width: 640px; }
+.ds-search .form-control { flex: 1 1 260px; }
+
+/* Neutralise template pieces that remain in older markup. */
+.office-front .section-title { display: none !important; }
+.office-front .back-to-top, .office-front #spinner { display: none !important; }
+.office-front .course-item, .office-front .service-item { background: var(--ds-surface) !important; border: 1px solid var(--ds-border); border-radius: var(--ds-radius); box-shadow: none !important; }
+
+/* ---------- 7. Back offices (TailAdmin overrides) ------------------------------------------------------------------- */
+.office-back {
+    /* Same type and palette as the front: system font, stone greys, navy as the brand colour. */
+    --font-outfit: var(--ds-font);
+    --color-brand-25: #f3f6f9;
+    --color-brand-50: #eef2f6;
+    --color-brand-100: #dbe3ec;
+    --color-brand-200: #b6c4d4;
+    --color-brand-300: #8197ae;
+    --color-brand-400: #3d5a78;
+    --color-brand-500: #03213d;
+    --color-brand-600: #0b3157;
+    --color-brand-700: #021729;
+    --color-brand-800: #011220;
+    --color-brand-950: #010b14;
+    --color-gray-25: #fcfcfb;
+    --color-gray-50: #fafaf9;
+    --color-gray-100: #f5f5f4;
+    --color-gray-200: #e7e5e4;
+    --color-gray-300: #d6d3d1;
+    --color-gray-400: #a8a29e;
+    --color-gray-500: #57534e;
+    --color-gray-600: #57534e;
+    --color-gray-700: #44403c;
+    --color-gray-800: #1c1917;
+    --color-gray-900: #1c1917;
+    --color-gray-950: #0c0a09;
+    --radius-2xl: 8px;
+    --radius-xl: 8px;
+    --text-title-sm: 24px;
+    font-family: var(--ds-font);
+    background: var(--ds-bg);
+    color: var(--ds-text);
+}
+.office-back main { background: var(--ds-bg); }
+.office-back .rounded-2xl, .office-back .rounded-xl { box-shadow: none; }
+.office-back table { font-variant-numeric: tabular-nums; }
+.office-back .simulation-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 1px 8px;
+    border: 1px solid var(--ds-border-strong);
+    border-radius: 999px;
+    background: var(--ds-surface);
+    color: var(--ds-muted);
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.6;
+    white-space: nowrap;
+}
+.office-back.dark .simulation-badge { background: transparent; border-color: #44403c; color: #d6d3d1; }
+.office-back .ds-metric-label { display: flex; align-items: center; gap: 8px; }
+.office-back .ds-metric-label .bi { font-size: 16px; color: var(--ds-faint); }
+.office-back :focus-visible { outline: none; box-shadow: var(--ds-ring); border-radius: 6px; }
+
+/* ---------- 8. Motion and accessibility ---------------------------------------------------------------------------- */
+.office-front :focus-visible { outline: none; box-shadow: var(--ds-ring); border-radius: 6px; }
+.office-front .btn:focus-visible { box-shadow: var(--ds-ring); }
+.visually-hidden-focusable:focus { position: static !important; width: auto !important; height: auto !important; }
+
+/* ---------- 9. Dark theme (front office; TailAdmin has its own, switched by the same toggle) ------------------------ */
+html[data-theme="dark"] {
+    color-scheme: dark;
+    background: #0f0e0d;
+    --ds-bg: #0f0e0d;
+    --ds-surface: #1c1917;
+    --ds-subtle: #26221f;
+    --ds-border: #2f2a26;
+    --ds-border-strong: #44403c;
+    --ds-text: #f5f5f4;
+    --ds-muted: #b5aea8;
+    --ds-faint: #8f8882;
+    --ds-teal-ink: #5fd4bf;
+    --ds-teal-soft: #0e2f2a;
+    --ds-danger: #f97066;
+    --ds-danger-soft: #2d1311;
+    --ds-warn: #fbbf24;
+    --ds-warn-soft: #2b210a;
+}
+html[data-theme="dark"] .office-front a { color: #cfe9e4; }
+html[data-theme="dark"] .office-front a:hover { color: var(--ds-teal-ink); }
+html[data-theme="dark"] .office-front .text-primary { color: var(--ds-text) !important; }
+html[data-theme="dark"] .office-front .btn-primary,
+html[data-theme="dark"] .office-front .btn-primary:disabled { background: #f5f5f4; border-color: #f5f5f4; color: var(--ds-navy); }
+html[data-theme="dark"] .office-front .btn-primary:hover,
+html[data-theme="dark"] .office-front .btn-primary:focus-visible { background: #d6d3d1; border-color: #d6d3d1; color: var(--ds-navy); }
+html[data-theme="dark"] .office-front .btn-link { color: #e7e5e4; }
+html[data-theme="dark"] .office-front .form-select {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23d6d3d1' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+}
+html[data-theme="dark"] .office-front .form-check-input { background-color: var(--ds-surface); }
+html[data-theme="dark"] .office-front .form-check-input:checked { background-color: #f5f5f4; border-color: #f5f5f4; }
+html[data-theme="dark"] .office-front .form-floating > label { color: var(--ds-muted); }
+html[data-theme="dark"] .ds-choice:has(input:checked) { border-color: #f5f5f4; box-shadow: inset 0 0 0 1px #f5f5f4; }
+html[data-theme="dark"] .ds-tag-ok { border-color: #1f5f55; }
+html[data-theme="dark"] .ds-tag-warn { border-color: #6b4f12; }
+html[data-theme="dark"] .ds-tag-danger { border-color: #6b231e; }
+html[data-theme="dark"] .office-front .alert-success { border-color: #1f5f55; color: #9fe3d6; }
+html[data-theme="dark"] .office-front .alert-danger { border-color: #6b231e; color: #fda29b; }
+html[data-theme="dark"] .ds-navbar { border-bottom-color: #0b3157; }
+/* TailAdmin status badges written without dark: variants (owner pages) */
+.office-back.dark .bg-orange-50 { background-color: rgba(251, 146, 60, .14); }
+.office-back.dark .bg-red-50 { background-color: rgba(248, 113, 113, .14); }
+.office-back.dark .bg-green-50 { background-color: rgba(52, 211, 153, .14); }
+.office-back.dark .bg-blue-50 { background-color: rgba(96, 165, 250, .14); }
+.office-back.dark .bg-gray-100 { background-color: rgba(231, 229, 228, .1); }
+.office-back.dark .text-orange-600 { color: #fdba74; }
+.office-back.dark .text-red-600 { color: #fca5a5; }
+.office-back.dark .text-green-600 { color: #6ee7b7; }
+.office-back.dark .text-blue-600 { color: #93c5fd; }
+html[data-theme="dark"] .leaflet-tile-pane { filter: brightness(.78) contrast(1.08) saturate(.85); }
+.office-front .border-top, .office-front .border-bottom { border-color: var(--ds-border) !important; }
+
+/* Smooth colour change while the theme switches (added for 450 ms by theme-toggle.js). */
+html.ds-theme-transition, html.ds-theme-transition *, html.ds-theme-transition *::before, html.ds-theme-transition *::after {
+    transition: background-color 300ms ease-out, color 300ms ease-out, border-color 300ms ease-out, fill 300ms ease-out !important;
+}
+
+/* Theme button in the front navbar: moon in light mode, sun in dark mode. */
+.ds-theme-toggle { width: 44px; padding: 0 !important; }
+.ds-theme-toggle .bi-sun { display: none; }
+html[data-theme="dark"] .ds-theme-toggle .bi-sun { display: inline-block; }
+html[data-theme="dark"] .ds-theme-toggle .bi-moon-stars { display: none; }
+
+/* ---------- 10. Motion: one quiet entrance, hover lift, press ----------------------------------------------------- */
+@keyframes ds-rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+#main > *, #main-content > div > * { animation: ds-rise 280ms cubic-bezier(.2, .8, .2, 1) both; }
+#main > :nth-child(2), #main-content > div > :nth-child(2) { animation-delay: 40ms; }
+#main > :nth-child(n+3), #main-content > div > :nth-child(n+3) { animation-delay: 80ms; }
+
+a.ds-card { transition: border-color var(--ds-fast) var(--ds-ease), transform 180ms var(--ds-ease); }
+a.ds-card:hover { transform: translateY(-2px); }
+.office-front .btn, .office-back button { transition-property: background-color, border-color, color, transform; }
+.office-front .btn:active, .office-back button:active { transform: scale(.98); }
+.ds-choice:active { transform: scale(.995); }
+
+/* ---------- 11. The penguin and the banker's lamp (theme switch moment, theme-toggle.js) -------------------------- */
+.ds-penguin-scene {
+    position: fixed;
+    right: 24px;
+    bottom: 0;
+    z-index: 100000;
+    width: 240px;
+    height: 230px;
+    pointer-events: none;
+    transform: translateY(105%);
+}
+.ds-penguin-scene svg { display: block; width: 100%; height: 100%; overflow: visible; }
+.ds-penguin, .ds-penguin-flipper, .ds-lamp-cord { transform-box: view-box; }
+.ds-penguin { transform-origin: 79px 222px; }
+.ds-penguin-flipper { transform-origin: 118px 142px; }
+.ds-p-dark { fill: #2a2233; }
+.ds-p-white { fill: #fbf6ef; }
+.ds-p-orange { fill: #f5a524; }
+.ds-p-cheek { fill: #f6a5a5; opacity: .45; }
+.ds-p-outline { stroke: rgba(255, 255, 255, .22); stroke-width: 1.2; }
+.ds-scene-shadow { fill: rgba(28, 25, 23, .18); }
+html[data-theme="dark"] .ds-scene-shadow { fill: rgba(0, 0, 0, .45); }
+
+/* Lamp off by default; .is-on lights it (light theme). */
+.ds-lamp-glow { opacity: 0; transition: opacity 220ms ease-out; }
+.ds-lamp-light { fill: #4a4234; transition: fill 160ms ease-out; }
+.ds-lamp-shade { filter: brightness(.72) saturate(.85); transition: filter 220ms ease-out; }
+.ds-penguin-scene.is-on .ds-lamp-glow { opacity: 1; }
+.ds-penguin-scene.is-on .ds-lamp-light { fill: #fff3c4; }
+.ds-penguin-scene.is-on .ds-lamp-shade { filter: none; }
+
+@media (max-width: 575.98px) {
+    .ds-penguin-scene { right: 8px; width: 180px; height: 172px; }
+}
+
+/* ---------- 12. Customer page enhancements (customer-ui.js) -------------------------------------------------------- */
+
+/* Quantity stepper: - [ 2 ] + */
+.ds-stepper { display: inline-flex; align-items: stretch; border: 1px solid var(--ds-border-strong); border-radius: var(--ds-radius); background: var(--ds-surface); overflow: hidden; }
+.ds-stepper .form-control { width: 3.5rem; min-height: 42px; border: 0; border-radius: 0; text-align: center; font-variant-numeric: tabular-nums; -moz-appearance: textfield; }
+.ds-stepper .form-control::-webkit-outer-spin-button, .ds-stepper .form-control::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.ds-stepper .form-control:focus { box-shadow: none; }
+.ds-stepper:focus-within { border-color: var(--ds-teal-ink); box-shadow: var(--ds-ring); }
+.ds-stepper-btn { width: 44px; border: 0; background: var(--ds-subtle); color: var(--ds-text); font-size: 18px; line-height: 1; transition: background-color var(--ds-fast) var(--ds-ease); }
+.ds-stepper-btn:hover:not(:disabled) { background: var(--ds-border); }
+.ds-stepper-btn:disabled { color: var(--ds-faint); cursor: not-allowed; }
+
+/* Delivery hint under "Add to cart" */
+.ds-delivery-hint { color: var(--ds-muted); font-size: var(--ds-text-sm); }
+.ds-delivery-hint .bi { margin-right: 6px; color: var(--ds-faint); }
+.ds-delivery-hint .simulation-badge { margin-left: 4px; }
+.ds-delivery-hint.is-limited [data-delivery-text] { color: var(--ds-text); }
+
+
+/* Password show / hide and Caps Lock warning */
+.ds-password { position: relative; }
+.ds-password .form-control { padding-right: 4.5rem; }
+.ds-password-toggle { position: absolute; top: 50%; right: 8px; transform: translateY(-50%); min-height: 36px; padding: 0 10px; border: 0; border-radius: 6px; background: transparent; color: var(--ds-navy); font-size: var(--ds-text-sm); font-weight: 600; }
+.ds-password-toggle:hover { background: var(--ds-subtle); }
+.form-floating.ds-password .ds-password-toggle { top: 29px; }
+html[data-theme="dark"] .ds-password-toggle { color: #e7e5e4; }
+.ds-caps-warning { min-height: 0; margin: 4px 0 0; color: var(--ds-warn); font-size: var(--ds-text-sm); font-weight: 600; }
+.ds-caps-warning:empty { display: none; }
+
+/* Chips: active filters, recent and popular searches */
+.ds-results-bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--ds-space-1) var(--ds-space-2); margin-bottom: var(--ds-space-2); }
+.ds-chips { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.ds-chip { display: inline-flex; align-items: center; gap: 4px; min-height: 32px; padding: 4px 12px; border: 1px solid var(--ds-border-strong); border-radius: 999px; background: var(--ds-surface); color: var(--ds-text) !important; font-size: var(--ds-text-sm); text-decoration: none; transition: border-color var(--ds-fast) var(--ds-ease), background-color var(--ds-fast) var(--ds-ease); }
+.ds-chip:hover { border-color: var(--ds-faint); background: var(--ds-subtle); }
+.ds-chip-active { border-color: var(--ds-navy); background: var(--ds-subtle); font-weight: 600; }
+html[data-theme="dark"] .ds-chip-active { border-color: #e7e5e4; }
+.ds-chip .bi { font-size: 16px; }
+.ds-chip-clear { color: var(--ds-muted) !important; border-style: dashed; }
+.office-front .form-select-sm { min-height: 36px; font-size: var(--ds-text-sm); }
+@media (max-width: 575.98px) { .ds-chip { min-height: 40px; } }
+
+/* Shops: card linked to its map marker */
+.ds-shop-card { cursor: pointer; transition: border-color var(--ds-fast) var(--ds-ease); }
+.ds-shop-card:hover { border-color: var(--ds-faint); }
+.ds-shop-card.is-selected { border-color: var(--ds-navy); box-shadow: inset 0 0 0 1px var(--ds-navy); }
+html[data-theme="dark"] .ds-shop-card.is-selected { border-color: #e7e5e4; box-shadow: inset 0 0 0 1px #e7e5e4; }
+
+/* Cart: weight meter against the drone limit */
+.ds-meter { height: 8px; border-radius: 999px; background: var(--ds-subtle); border: 1px solid var(--ds-border); overflow: hidden; }
+.ds-meter > span { display: block; height: 100%; border-radius: 999px; background: var(--ds-teal-ink); }
+.ds-meter.is-over > span { background: var(--ds-warn); }
+
+/* Checkout: steps */
+.ds-steps { display: flex; flex-wrap: wrap; gap: 8px 24px; margin: 0 0 var(--ds-space-3); padding: 0; list-style: none; font-size: var(--ds-text-sm); color: var(--ds-muted); }
+.ds-steps li { display: inline-flex; align-items: center; gap: 8px; max-width: none; }
+.ds-steps a { display: inline-flex; align-items: center; gap: 8px; color: var(--ds-muted); text-decoration: none; }
+.ds-steps a:hover { color: var(--ds-text); text-decoration: underline; }
+.ds-step-mark { display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; border: 1px solid var(--ds-border-strong); border-radius: 999px; background: var(--ds-surface); font-size: 12px; font-weight: 600; }
+.ds-steps .is-done .ds-step-mark { border-color: var(--ds-teal-ink); color: var(--ds-teal-ink); }
+.ds-steps .is-current { color: var(--ds-text); font-weight: 600; }
+.ds-steps .is-current .ds-step-mark { border-color: var(--ds-navy); background: var(--ds-navy); color: #fff; }
+html[data-theme="dark"] .ds-steps .is-current .ds-step-mark { border-color: #f5f5f4; background: #f5f5f4; color: var(--ds-navy); }
+
+/* A value that just changed (checkout fee and total) */
+@keyframes ds-changed { from { background-color: var(--ds-teal-soft); } to { background-color: transparent; } }
+.ds-changed { animation: ds-changed 900ms ease-out; border-radius: 4px; }
+
+/* Messages after an action (flash): icon, text, close button */
+.ds-message { display: flex; align-items: flex-start; gap: 10px; padding: 12px 8px 12px 14px; }
+.ds-message > .bi { margin-top: 2px; font-size: 18px; }
+.ds-message > span { flex: 1; }
+.ds-message-close { display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; margin: -6px 0; border: 0; border-radius: 6px; background: transparent; color: inherit; }
+.ds-message-close:hover { background: rgba(0, 0, 0, .06); }
+
+/* "/" shortcut hint next to search fields (wide screens) */
+.ds-kbd { display: inline-flex; align-items: center; justify-content: center; min-width: 22px; height: 22px; padding: 0 6px; border: 1px solid var(--ds-border-strong); border-bottom-width: 2px; border-radius: 4px; background: var(--ds-surface); color: var(--ds-muted); font: 600 12px/1 var(--ds-font); }
+.ds-shortcut-hint { display: block; flex-basis: 100%; margin-top: 6px; color: var(--ds-faint); font-size: 12px; }
+@media (max-width: 991.98px) { .ds-shortcut-hint { display: none; } }
+
+/* Phone: sticky total and checkout button at the bottom of the cart */
+.ds-sticky-bar { position: sticky; bottom: 0; z-index: 20; display: flex; align-items: center; justify-content: space-between; gap: var(--ds-space-2); margin: var(--ds-space-3) calc(-1 * var(--bs-gutter-x, 12px)) 0; padding: 12px var(--bs-gutter-x, 12px) calc(12px + env(safe-area-inset-bottom)); background: var(--ds-surface); border-top: 1px solid var(--ds-border); box-shadow: 0 -6px 16px rgba(28, 25, 23, .06); }
+.ds-sticky-bar strong { font-size: var(--ds-text-lg); }
+
+/* ---------- 13. Customer pages: scroll reveals, hover states, page transitions --------------------------------- */
+
+/* Scroll reveal: customer-ui.js marks blocks below the fold with .ds-reveal and adds .is-visible when they enter.
+   Only when JavaScript runs (.ds-js) and motion is allowed, so content is never left hidden. */
+@media (prefers-reduced-motion: no-preference) {
+    .ds-js .office-front .ds-reveal {
+        opacity: 0;
+        transform: translateY(14px);
+        transition: opacity 420ms var(--ds-ease), transform 420ms var(--ds-ease);
+        transition-delay: var(--ds-delay, 0ms);
+    }
+    .ds-js .office-front .ds-reveal.is-visible { opacity: 1; transform: none; }
+}
+
+/* Hover states: quiet, one property at a time. */
+.office-front .ds-card-row { transition: border-color 200ms var(--ds-ease), transform 200ms var(--ds-ease); }
+.office-front .ds-card-row:hover { border-color: var(--ds-faint); transform: translateY(-2px); }
+.office-front .ds-media .bi { transition: transform 260ms var(--ds-ease); }
+.office-front .ds-card-row:hover .ds-media .bi, .office-front a.ds-card:hover .bi { transform: scale(1.08); }
+.office-front .ds-shop-card { transition: border-color 200ms var(--ds-ease), transform 200ms var(--ds-ease); }
+.office-front .ds-shop-card:hover { transform: translateY(-2px); }
+.office-front .ds-chip { transition: border-color var(--ds-fast) var(--ds-ease), background-color var(--ds-fast) var(--ds-ease), transform var(--ds-fast) var(--ds-ease); }
+.office-front .ds-chip:hover { transform: translateY(-1px); }
+.office-front .ds-choice { transition: border-color var(--ds-fast) var(--ds-ease), background-color var(--ds-fast) var(--ds-ease); }
+.office-front .ds-choice:not(.is-disabled):hover { background: var(--ds-subtle); }
+.office-front .ds-footer a { transition: color var(--ds-fast) var(--ds-ease); }
+
+/* Page transitions: a short cross-fade, the navbar stays still. The load entrance is skipped where they exist. */
+::view-transition-old(root) { animation: 160ms ease-in both ds-vt-out; }
+::view-transition-new(root) { animation: 260ms cubic-bezier(.2, .8, .2, 1) both ds-vt-in; }
+@keyframes ds-vt-out { to { opacity: 0; } }
+@keyframes ds-vt-in { from { opacity: 0; transform: translateY(6px); } }
+@supports (view-transition-name: none) {
+    .office-front #main > * { animation: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { transition-duration: 0ms !important; animation-duration: 0ms !important; animation-delay: 0ms !important; scroll-behavior: auto !important; }
+    a.ds-card:hover, .office-front .btn:active, .office-back button:active { transform: none; }
+    .office-front .ds-card-row:hover, .office-front .ds-shop-card:hover, .office-front .ds-chip:hover,
+    .office-front .ds-card-row:hover .ds-media .bi, .office-front a.ds-card:hover .bi { transform: none; }
+    ::view-transition-old(root), ::view-transition-new(root) { animation: none; }
+}
+
+/* ---------- 14. Form errors from forms.js (both offices), same look as the server's messages --------------------- */
+.ds-field-error { margin: 4px 0 0; font-size: var(--ds-text-sm); color: var(--ds-danger, #b42318); }
+.office-back .ds-field-error { font-size: 12px; }
+.office-front .form-control[aria-invalid="true"], .office-front .form-select[aria-invalid="true"] { border-color: var(--ds-danger, #b42318); }
+.office-back input[aria-invalid="true"], .office-back select[aria-invalid="true"], .office-back textarea[aria-invalid="true"] {
+    border-color: #ef4444; box-shadow: 0 0 0 3px rgb(239 68 68 / .2);
+}
+html[data-theme="dark"] .ds-field-error, .dark .ds-field-error { color: #f97066; }

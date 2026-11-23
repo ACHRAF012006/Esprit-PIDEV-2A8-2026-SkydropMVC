@@ -1,0 +1,40 @@
+/*
+ * SKYDROP brand layer for the back-office sidebar and shared map boxes.
+ * Everything else (palette, type, buttons, forms, tags, tables) is in design-system.css, which loads after this file.
+ */
+:root {
+    --sky-navy: #03213d;
+    --sky-navy-soft: #0b3157;
+    --sky-teal: #21cbae;
+    --sky-teal-ink: #0b7a68;
+}
+
+/* ---------- Back offices: navy sidebar, like the front navbar ---------- */
+.office-back .skydrop-sidebar {
+    background-color: var(--sky-navy) !important;
+    border-color: var(--sky-navy-soft) !important;
+}
+.office-back .skydrop-sidebar .menu-group-title { color: #a8b8c8; }
+.office-back .skydrop-sidebar .menu-item { min-height: 44px; }
+.office-back .skydrop-sidebar .menu-item-active {
+    background-color: rgba(255, 255, 255, .08);
+    color: #fff;
+    box-shadow: inset 2px 0 0 var(--sky-teal);
+}
+.office-back .skydrop-sidebar .menu-item-active .bi { color: #fff; }
+.office-back .skydrop-sidebar .menu-item-inactive { color: #c9d4df; }
+.office-back .skydrop-sidebar .menu-item-inactive:hover {
+    background-color: rgba(255, 255, 255, .06);
+    color: #fff;
+}
+.office-back .sky-link { color: var(--sky-navy); text-decoration: underline; text-decoration-color: #d6d3d1; text-underline-offset: 3px; }
+.office-back .sky-link:hover { color: var(--sky-teal-ink); text-decoration-color: currentColor; }
+.office-back.dark .sky-link { color: #e7e5e4; }
+.office-back.dark .sky-link:hover { color: var(--sky-teal); }
+.office-back .sky-input:focus {
+    outline: none;
+    border-color: var(--sky-teal-ink);
+    box-shadow: 0 0 0 3px rgba(33, 203, 174, .3);
+}
+.office-back.dark .sky-input option { color: #1c1917; }
+.office-back .sky-map { height: 320px; border-radius: 8px; }
