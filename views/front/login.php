@@ -44,6 +44,7 @@ require VIEW_PATH . '/partials/page-banner.php';
                                             <?php endif; ?>
                                         </div>
                                     </div>
+                                    <div class="col-12 text-end"><a href="<?= e(route('password-forgot')) ?>">Forgot your password?</a></div>
                                     <div class="col-12">
                                         <button class="btn btn-primary w-100" type="submit">Login</button>
                                     </div>
