@@ -71,6 +71,57 @@ CREATE TABLE IF NOT EXISTS user_activity (
     CONSTRAINT fk_user_activity_target FOREIGN KEY (target_id) REFERENCES users (id) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- Coupons and coupon types (S1 Achref)
+-- coupon_types: what a coupon does. key_name is the fixed kind the code understands (percent, fixed amount, free
+-- delivery); needs_value says whether a coupon of this kind needs a value (free delivery has none).
+CREATE TABLE IF NOT EXISTS coupon_types (
+    id          INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    key_name    ENUM('percent','fixed','free_delivery') NOT NULL,
+    name        VARCHAR(60)  NOT NULL,
+    description VARCHAR(255) NOT NULL DEFAULT '',
+    needs_value TINYINT(1)   NOT NULL DEFAULT 1,
+    is_active   TINYINT(1)   NOT NULL DEFAULT 1,
+    created_at  DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (id),
+    UNIQUE KEY uq_coupon_types_key (key_name)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- coupons: one code customers type at checkout. type_id links each coupon to its type (the JOIN of this part).
+-- max_uses NULL = no total limit; per_user_limit NULL = no limit per customer.
+CREATE TABLE IF NOT EXISTS coupons (
+    id             INT UNSIGNED  NOT NULL AUTO_INCREMENT,
+    code           VARCHAR(20)   NOT NULL,
+    type_id        INT UNSIGNED  NOT NULL,
+    value          DECIMAL(10,3) NULL,
+    min_order      DECIMAL(10,3) NOT NULL DEFAULT 0,
+    starts_at      DATE          NOT NULL,
+    ends_at        DATE          NOT NULL,
+    max_uses       INT UNSIGNED  NULL,
+    per_user_limit INT UNSIGNED  NULL DEFAULT 1,
+    is_active      TINYINT(1)    NOT NULL DEFAULT 1,
+    created_by     INT UNSIGNED  NULL,
+    created_at     DATETIME      NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (id),
+    UNIQUE KEY uq_coupons_code (code),
+    KEY idx_coupons_type (type_id),
+    CONSTRAINT fk_coupons_type FOREIGN KEY (type_id) REFERENCES coupon_types (id),
+    CONSTRAINT fk_coupons_creator FOREIGN KEY (created_by) REFERENCES users (id) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- coupon_uses: one row each time a customer uses a coupon (written by the order part through CouponController::recordUse).
+CREATE TABLE IF NOT EXISTS coupon_uses (
+    id        INT UNSIGNED  NOT NULL AUTO_INCREMENT,
+    coupon_id INT UNSIGNED  NOT NULL,
+    user_id   INT UNSIGNED  NOT NULL,
+    order_id  INT UNSIGNED  NULL,
+    discount  DECIMAL(10,3) NOT NULL DEFAULT 0,
+    used_at   DATETIME      NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (id),
+    KEY idx_coupon_uses_coupon_user (coupon_id, user_id),
+    CONSTRAINT fk_coupon_uses_coupon FOREIGN KEY (coupon_id) REFERENCES coupons (id),
+    CONSTRAINT fk_coupon_uses_user FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 -- ============================================================
 -- DEMO DATA
 -- ============================================================
@@ -99,3 +150,18 @@ INSERT IGNORE INTO user_activity (id, actor_id, target_id, action, details, crea
 (2, 1, 4, 'role_changed',   'customer -> advertiser',                         '2026-11-05 11:20:00'),
 (3, 1, 6, 'deactivated',    'Deactivated Customer (@blocked)',                '2026-11-09 10:15:00'),
 (4, 1, 3, 'password_reset', 'Temporary password, changed at the next login', '2026-11-12 16:40:00');
+
+-- Coupons and coupon types (S1 Achref): the 3 types, 4 coupons (one expired), one use by the demo customer.
+INSERT IGNORE INTO coupon_types (id, key_name, name, description, needs_value, is_active) VALUES
+(1, 'percent',       'Percentage off',   'Takes a percentage off the order subtotal.',        1, 1),
+(2, 'fixed',         'Fixed amount off', 'Takes a fixed amount in TND off the order subtotal.', 1, 1),
+(3, 'free_delivery', 'Free delivery',    'The delivery of the order is free.',                0, 1);
+
+INSERT IGNORE INTO coupons (id, code, type_id, value, min_order, starts_at, ends_at, max_uses, per_user_limit, is_active, created_by) VALUES
+(1, 'WELCOME10', 1, 10.000, 20.000, '2026-11-01', '2027-06-30', NULL, 1,    1, 1),
+(2, 'SAVE5',     2,  5.000, 15.000, '2026-11-01', '2027-03-31', 200,  2,    1, 1),
+(3, 'FREESHIP',  3,   NULL,  0.000, '2026-11-15', '2027-01-31', 100,  1,    1, 1),
+(4, 'SUMMER25',  1, 25.000, 30.000, '2026-07-01', '2026-09-30', 50,   1,    1, 1);
+
+INSERT IGNORE INTO coupon_uses (id, coupon_id, user_id, order_id, discount, used_at) VALUES
+(1, 4, 3, NULL, 9.250, '2026-08-14 18:20:00');
