@@ -83,6 +83,7 @@ final class AdminUserController extends Controller
         $this->render('admin/user', [
             'title' => $user->getFullName() . ' | SKYDROP Admin',
             'user' => $user,
+            'activity' => (new UserActivityController())->forUser($user->getId()),
             'me' => (int) Auth::id(),
         ] + $this->formState());
     }
@@ -160,6 +161,7 @@ final class AdminUserController extends Controller
             }
             $stmt = $this->db->prepare($sql . ' WHERE id = :id');
             $stmt->execute($args + ['id' => $id]);
+            (new UserActivityController())->record((int) Auth::id(), $id, 'updated', $v->get('full_name') . ($existing->getRole() !== $v->get('role') ? ', ' . $existing->getRole() . ' -> ' . $v->get('role') : ''));
             flash('success', $v->get('full_name') . ' is saved.');
         } else {
             // A first password given by the admin: the user must choose their own at the first login.
@@ -167,6 +169,7 @@ final class AdminUserController extends Controller
                 VALUES (:full_name, :username, :email, :phone, :role, :active, :password, 1)');
             $stmt->execute($args + ['password' => password_hash($password, PASSWORD_DEFAULT)]);
             $id = (int) $this->db->lastInsertId();
+            (new UserActivityController())->record((int) Auth::id(), $id, 'created', $v->get('full_name') . ' (@' . $v->get('username') . '), ' . $v->get('role'));
             flash('success', $v->get('full_name') . ' is added. They choose their own password at their first login.');
         }
         $this->redirect(route('admin-user', ['id' => $id]));
@@ -182,6 +185,7 @@ final class AdminUserController extends Controller
             $this->redirect(route('admin-user', ['id' => $user->getId()]));
         }
         $deleted = (new AuthController())->deleteOrDeactivate($user->getId());
+        (new UserActivityController())->record((int) Auth::id(), $deleted ? null : $user->getId(), $deleted ? 'deleted' : 'deactivated', $user->getFullName() . ' (@' . $user->getUsername() . ')' . ($deleted ? '' : ', still used by other records'));
         flash('success', $deleted
             ? $user->getFullName() . ' is deleted.'
             : $user->getFullName() . ' is still used by other records (shop, orders...), so the account is deactivated instead.');
@@ -202,6 +206,7 @@ final class AdminUserController extends Controller
         } else {
             $stmt = $this->db->prepare('UPDATE users SET is_active = :active WHERE id = :id');
             $stmt->execute(['active' => $user->isActive() ? 0 : 1, 'id' => $user->getId()]);
+            (new UserActivityController())->record((int) Auth::id(), $user->getId(), $user->isActive() ? 'deactivated' : 'activated', $user->getFullName() . ' (@' . $user->getUsername() . ')');
             flash('success', $user->getFullName() . ($user->isActive() ? ' is deactivated.' : ' is active again.'));
         }
         $this->redirect($this->backToList());
@@ -220,6 +225,7 @@ final class AdminUserController extends Controller
         } else {
             $stmt = $this->db->prepare('UPDATE users SET role = :role WHERE id = :id');
             $stmt->execute(['role' => $role, 'id' => $user->getId()]);
+            (new UserActivityController())->record((int) Auth::id(), $user->getId(), 'role_changed', $user->getRole() . ' -> ' . $role);
             flash('success', $user->getFullName() . ' is now: ' . UserModel::ROLES[$role] . '.');
         }
         $this->redirect($this->backToList());
@@ -246,6 +252,7 @@ final class AdminUserController extends Controller
         }
         $stmt = $this->db->prepare('UPDATE users SET password = :password, must_change_password = :must WHERE id = :id');
         $stmt->execute(['password' => password_hash($password, PASSWORD_DEFAULT), 'must' => $user->getId() === Auth::id() ? 0 : 1, 'id' => $user->getId()]);
+        (new UserActivityController())->record((int) Auth::id(), $user->getId(), 'password_reset', $user->getId() === Auth::id() ? 'Own password' : 'Temporary password, changed at the next login');
         flash('success', 'New password saved for ' . $user->getFullName() . '. Give it to them: they choose their own at the next login.');
         $this->redirect(route('admin-user', ['id' => $user->getId()]));
     }
