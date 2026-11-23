@@ -49,4 +49,19 @@ return [
         ],
         'slots' => [],
     ],
+    // Coupons and coupon types (S1 Achref)
+    'coupon' => [
+        'label' => 'Coupons',
+        'routes' => [
+            ['GET', '/admin/coupon-types', [AdminCouponTypeController::class, 'index'], 'admin-coupon-types'],
+            ['GET', '/admin/coupon-types/form', [AdminCouponTypeController::class, 'form'], 'admin-coupon-type-form'],
+            ['POST', '/admin/coupon-types/form', [AdminCouponTypeController::class, 'save'], 'admin-coupon-type-form'],
+            ['POST', '/admin/coupon-types/{id}/delete', [AdminCouponTypeController::class, 'delete'], 'admin-coupon-type-delete'],
+        ],
+        'menu' => [
+            'front' => [],
+            'admin' => [['admin-coupon-types', 'Coupon types', 'bi-tags']],
+        ],
+        'slots' => [],
+    ],
 ];
