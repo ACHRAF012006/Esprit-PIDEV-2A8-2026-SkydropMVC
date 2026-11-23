@@ -53,6 +53,7 @@ return [
     'coupon' => [
         'label' => 'Coupons',
         'routes' => [
+            ['GET', '/offers', [CouponController::class, 'offers'], 'offers'],
             ['GET', '/admin/coupon-types', [AdminCouponTypeController::class, 'index'], 'admin-coupon-types'],
             ['GET', '/admin/coupon-types/form', [AdminCouponTypeController::class, 'form'], 'admin-coupon-type-form'],
             ['POST', '/admin/coupon-types/form', [AdminCouponTypeController::class, 'save'], 'admin-coupon-type-form'],
@@ -64,9 +65,11 @@ return [
             ['POST', '/admin/coupons/{id}/delete', [AdminCouponController::class, 'delete'], 'admin-coupon-delete'],
         ],
         'menu' => [
-            'front' => [],
+            'front' => [['offers', 'Offers']],
             'admin' => [['admin-coupons', 'Coupons', 'bi-ticket-perforated'], ['admin-coupon-types', 'Coupon types', 'bi-tags']],
         ],
-        'slots' => [],
+        'slots' => [
+            'profile' => ['front/profile-coupons'],
+        ],
     ],
 ];
