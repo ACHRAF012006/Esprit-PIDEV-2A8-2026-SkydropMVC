@@ -40,11 +40,12 @@ return [
             ['GET', '/password/reset', [PasswordResetController::class, 'resetForm'], 'password-reset'],
             ['POST', '/password/reset', [PasswordResetController::class, 'reset'], 'password-reset'],
             ['POST', '/admin/users/bulk', [AdminUserController::class, 'bulk'], 'admin-users-bulk'],
+            ['GET', '/admin/activity', [UserActivityController::class, 'index'], 'admin-activity'],
         ],
         'menu' => [
             'front' => [],
             'owner' => [['owner-dashboard', 'Overview', 'bi-grid']],
-            'admin' => [['admin-dashboard', 'Overview', 'bi-grid'], ['admin-users', 'Users', 'bi-people']],
+            'admin' => [['admin-dashboard', 'Overview', 'bi-grid'], ['admin-users', 'Users', 'bi-people'], ['admin-activity', 'Activity', 'bi-clock-history']],
         ],
         'slots' => [],
     ],

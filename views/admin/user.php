@@ -2,7 +2,7 @@
 /**
  * S1 - Administrator: one account in detail, its quick actions, a new password, and the blocks other modules add
  * for this account (slot "admin-user": shop, orders, ads...). Only the page content.
- * Variables: $user (User\UserModel), $me (my id), $errors.
+ * Variables: $user (User\UserModel), $me (my id), $errors, $activity (UserActivityModel[], last 10 actions on this account, S3 Islem).
  */
 $pageTitle = $user->getFullName();
 require VIEW_PATH . '/partials/back-title.php';
@@ -61,6 +61,39 @@ $blocks = slot('admin-user', ['user' => $user]);
       <input class="<?= $ui['input'] ?>" type="password" id="new_password_confirm" name="new_password_confirm" data-required data-match="new_password" autocomplete="new-password">
       <button type="submit" class="<?= $ui['outline'] ?> mt-4">Save the new password</button>
     </form>
+  </div>
+</div>
+
+<!-- S3 Islem: the last actions of administrators on this account (table user_activity). -->
+<div class="<?= $ui['card'] ?> mt-6">
+  <div class="flex flex-wrap items-center justify-between gap-3 px-5 py-4 sm:px-6">
+    <h3 class="text-lg font-semibold text-gray-800 dark:text-white/90">Recent activity</h3>
+    <a class="sky-link text-sm font-medium" href="<?= e(route('admin-activity')) ?>">See all activity</a>
+  </div>
+  <div class="max-w-full overflow-x-auto">
+    <table class="min-w-full">
+      <thead class="border-y border-gray-100 dark:border-white/5">
+        <tr>
+          <th class="<?= $ui['th'] ?>">Date</th>
+          <th class="<?= $ui['th'] ?>">Administrator</th>
+          <th class="<?= $ui['th'] ?>">Action</th>
+          <th class="<?= $ui['th'] ?>">Details</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-100 dark:divide-white/5">
+        <?php if (empty($activity)) : ?>
+          <tr><td colspan="4" class="px-5 py-6 text-center text-sm text-gray-500 sm:px-6 dark:text-gray-400">No administrator has changed this account yet.</td></tr>
+        <?php endif; ?>
+        <?php foreach ($activity ?? [] as $item) : ?>
+          <tr>
+            <td class="<?= $ui['td'] ?> whitespace-nowrap"><?= e(substr($item->getCreatedAt(), 0, 16)) ?></td>
+            <td class="<?= $ui['td'] ?>"><?= e($item->getActorUsername() !== null ? '@' . $item->getActorUsername() : 'Deleted account') ?></td>
+            <td class="px-5 py-4 text-start sm:px-6"><span class="<?= $ui['strong'] ?>"><?= e($item->getActionLabel()) ?></span></td>
+            <td class="<?= $ui['td'] ?>"><?= e($item->getDetails() !== '' ? $item->getDetails() : '-') ?></td>
+          </tr>
+        <?php endforeach; ?>
+      </tbody>
+    </table>
   </div>
 </div>
 

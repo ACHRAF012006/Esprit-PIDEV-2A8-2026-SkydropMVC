@@ -54,6 +54,23 @@ CREATE TABLE IF NOT EXISTS password_resets (
     CONSTRAINT fk_password_resets_user FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- S3 Islem: activity log of the administrators' actions on accounts (who did what, to which account, when).
+-- actor_id = the administrator, target_id = the account. Both become NULL when that account is deleted, so the log stays.
+-- INT UNSIGNED like users.id (a foreign key needs the same type on both sides).
+CREATE TABLE IF NOT EXISTS user_activity (
+    id         INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    actor_id   INT UNSIGNED NULL,
+    target_id  INT UNSIGNED NULL,
+    action     VARCHAR(40)  NOT NULL,
+    details    VARCHAR(255) NOT NULL DEFAULT '',
+    created_at DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (id),
+    KEY idx_user_activity_target (target_id),
+    KEY idx_user_activity_created (created_at),
+    CONSTRAINT fk_user_activity_actor FOREIGN KEY (actor_id) REFERENCES users (id) ON DELETE SET NULL,
+    CONSTRAINT fk_user_activity_target FOREIGN KEY (target_id) REFERENCES users (id) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 -- ============================================================
 -- DEMO DATA
 -- ============================================================
@@ -75,3 +92,10 @@ INSERT IGNORE INTO users (id, username, email, password, role, full_name, phone,
 (11, 'owner11', 'owner11@skydrop.test', '$2y$10$CEf2IyxlyZA4L5IhNZy.buVfkQPR/.hJM/SDAdXUdi3gubsHeaCp.', 'shop_owner', 'Owner of Tech Corner', NULL, 1, '2026-10-10 09:00:00'),
 (12, 'owner12', 'owner12@skydrop.test', '$2y$10$CEf2IyxlyZA4L5IhNZy.buVfkQPR/.hJM/SDAdXUdi3gubsHeaCp.', 'shop_owner', 'Owner of Pharmacie Carthage', NULL, 1, '2026-10-10 09:00:00'),
 (13, 'owner13', 'owner13@skydrop.test', '$2y$10$CEf2IyxlyZA4L5IhNZy.buVfkQPR/.hJM/SDAdXUdi3gubsHeaCp.', 'shop_owner', 'Owner of Primeur Ariana', NULL, 1, '2026-10-10 09:00:00');
+
+-- S3 Islem: a few demo rows of the activity log (actor 1 = the demo admin).
+INSERT IGNORE INTO user_activity (id, actor_id, target_id, action, details, created_at) VALUES
+(1, 1, 5, 'created',        'Second Shop Owner (@owner2), shop_owner',        '2026-10-20 14:00:00'),
+(2, 1, 4, 'role_changed',   'customer -> advertiser',                         '2026-11-05 11:20:00'),
+(3, 1, 6, 'deactivated',    'Deactivated Customer (@blocked)',                '2026-11-09 10:15:00'),
+(4, 1, 3, 'password_reset', 'Temporary password, changed at the next login', '2026-11-12 16:40:00');
