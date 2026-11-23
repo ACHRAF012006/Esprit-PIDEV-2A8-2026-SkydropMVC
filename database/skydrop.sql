@@ -1,5 +1,5 @@
 -- SKYDROP: the whole database (user management: tables, then demo rows).
--- Run: php database/install.php   (or import this file in phpMyAdmin into the database skydrop_v2)
+-- Run: php database/install.php   (or import this file in phpMyAdmin into the database skydrop_mvc)
 
 -- ============================================================
 -- TABLES
