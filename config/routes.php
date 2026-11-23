@@ -35,11 +35,12 @@ return [
             ['POST', '/admin/users/{id}/password', [AdminUserController::class, 'setPassword'], 'admin-user-password'],
             ['POST', '/admin/users/{id}/toggle', [AdminUserController::class, 'toggle'], 'admin-user-toggle'],
             ['POST', '/admin/users/{id}/role', [AdminUserController::class, 'changeRole'], 'admin-user-role'],
+            ['GET', '/admin/activity', [UserActivityController::class, 'index'], 'admin-activity'],
         ],
         'menu' => [
             'front' => [],
             'owner' => [['owner-dashboard', 'Overview', 'bi-grid']],
-            'admin' => [['admin-dashboard', 'Overview', 'bi-grid'], ['admin-users', 'Users', 'bi-people']],
+            'admin' => [['admin-dashboard', 'Overview', 'bi-grid'], ['admin-users', 'Users', 'bi-people'], ['admin-activity', 'Activity', 'bi-clock-history']],
         ],
         'slots' => [],
     ],
