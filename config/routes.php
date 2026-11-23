@@ -39,6 +39,7 @@ return [
             ['POST', '/password/forgot', [PasswordResetController::class, 'request'], 'password-forgot'],
             ['GET', '/password/reset', [PasswordResetController::class, 'resetForm'], 'password-reset'],
             ['POST', '/password/reset', [PasswordResetController::class, 'reset'], 'password-reset'],
+            ['POST', '/admin/users/bulk', [AdminUserController::class, 'bulk'], 'admin-users-bulk'],
         ],
         'menu' => [
             'front' => [],
