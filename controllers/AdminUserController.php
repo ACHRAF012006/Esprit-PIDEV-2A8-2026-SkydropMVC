@@ -294,9 +294,13 @@ final class AdminUserController extends Controller
         // Only the ids that still exist (an account may have been deleted in another tab).
         if ($ids) {
             [$in, $args] = $this->inList($ids);
-            $stmt = $this->db->prepare('SELECT id FROM users WHERE id IN ' . $in);
+            $stmt = $this->db->prepare('SELECT id, full_name, username FROM users WHERE id IN ' . $in);
             $stmt->execute($args);
-            $ids = array_map('intval', $stmt->fetchAll(\PDO::FETCH_COLUMN));
+            $names = [];
+            foreach ($stmt->fetchAll() as $row) {
+                $names[(int) $row['id']] = $row['full_name'] . ' (@' . $row['username'] . ')'; // for the activity log
+            }
+            $ids = array_keys($names);
         }
         if (!$ids) {
             $errors['ids'] = 'Select at least one account.';
@@ -310,10 +314,14 @@ final class AdminUserController extends Controller
         if ($action === 'delete') {
             // The single delete's logic: an account still used by other tables is deactivated instead.
             $auth = new AuthController();
+            $log = new UserActivityController();
             $deleted = 0;
             foreach ($ids as $id) {
                 if ($auth->deleteOrDeactivate($id)) {
                     $deleted++;
+                    $log->record($me, null, 'deleted', $names[$id] . ', bulk action');
+                } else {
+                    $log->record($me, $id, 'deactivated', $names[$id] . ', still used by other records, bulk action');
                 }
             }
             $kept = count($ids) - $deleted;
@@ -328,6 +336,10 @@ final class AdminUserController extends Controller
             [$in, $args] = $this->inList($ids);
             $stmt = $this->db->prepare('UPDATE users SET is_active = :active WHERE id IN ' . $in);
             $stmt->execute($args + ['active' => $action === 'activate' ? 1 : 0]);
+            $log = new UserActivityController();
+            foreach ($ids as $id) {
+                $log->record($me, $id, $action === 'activate' ? 'activated' : 'deactivated', $names[$id] . ', bulk action');
+            }
             flash('success', self::accounts(count($ids)) . ($action === 'activate' ? ' activated.' : ' deactivated.'));
         }
         $this->redirect($back);
