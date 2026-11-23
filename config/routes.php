@@ -35,6 +35,7 @@ return [
             ['POST', '/admin/users/{id}/password', [AdminUserController::class, 'setPassword'], 'admin-user-password'],
             ['POST', '/admin/users/{id}/toggle', [AdminUserController::class, 'toggle'], 'admin-user-toggle'],
             ['POST', '/admin/users/{id}/role', [AdminUserController::class, 'changeRole'], 'admin-user-role'],
+            ['POST', '/admin/users/bulk', [AdminUserController::class, 'bulk'], 'admin-users-bulk'],
         ],
         'menu' => [
             'front' => [],
