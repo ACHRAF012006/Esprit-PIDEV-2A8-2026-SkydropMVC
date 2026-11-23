@@ -18,6 +18,9 @@ final class AdminUserController extends Controller
     /** Sort keys of the list => SQL column (never the browser's text inside the SQL). */
     private const SORTS = ['name' => 'full_name', 'created' => 'created_at', 'login' => 'last_login_at'];
 
+    /** Actions of the bulk bar (S2): value sent by the form => label of the select. */
+    public const BULK_ACTIONS = ['activate' => 'Activate', 'deactivate' => 'Deactivate', 'delete' => 'Delete'];
+
     public function __construct()
     {
         $this->db = \Database::getConnexion();
@@ -43,7 +46,9 @@ final class AdminUserController extends Controller
             'page' => $page,
             'pages' => $pages,
             'me' => (int) Auth::id(),
-        ]);
+            'bulkActions' => self::BULK_ACTIONS,
+            'pageScripts' => ['js/users-bulk.js'],
+        ] + $this->formState());
     }
 
     /** The filtered list as a CSV file (UTF-8 with BOM so that Excel shows accents), no password. */
@@ -248,6 +253,95 @@ final class AdminUserController extends Controller
         $stmt->execute(['password' => password_hash($password, PASSWORD_DEFAULT), 'must' => $user->getId() === Auth::id() ? 0 : 1, 'id' => $user->getId()]);
         flash('success', 'New password saved for ' . $user->getFullName() . '. Give it to them: they choose their own at the next login.');
         $this->redirect(route('admin-user', ['id' => $user->getId()]));
+    }
+
+    // =================================================================================================
+    // BULK ACTIONS (S2 Youssef Mili): activate, deactivate or delete the accounts checked in the list
+    // =================================================================================================
+
+    public function bulk(): void
+    {
+        Auth::requireRole('admin');
+        Csrf::check();
+        // Back to the same list: the form action carries the filters and the page in its query string.
+        $back = route('admin-users', array_filter($this->filters() + ['p' => max(1, (int) ($_GET['p'] ?? 1))], static fn ($v) => $v !== ''));
+
+        $v = (new Validator($_POST))->required('action')->in('action', array_keys(self::BULK_ACTIONS));
+        $errors = $v->errors();
+        $action = $v->get('action');
+
+        // ids[]: keep whole numbers above 0, each one once (text, 0 and repeats are dropped).
+        $ids = [];
+        foreach ((array) ($_POST['ids'] ?? []) as $id) {
+            $id = is_scalar($id) ? (int) $id : 0;
+            if ($id > 0 && !in_array($id, $ids, true)) {
+                $ids[] = $id;
+            }
+        }
+        // Same rule as the single actions: an administrator never changes their own account here.
+        $me = (int) Auth::id();
+        if (in_array($me, $ids, true)) {
+            $ids = array_values(array_diff($ids, [$me]));
+            flash('error', 'Your own account was skipped: you cannot deactivate or delete it here.');
+        }
+        // Only the ids that still exist (an account may have been deleted in another tab).
+        if ($ids) {
+            [$in, $args] = $this->inList($ids);
+            $stmt = $this->db->prepare('SELECT id FROM users WHERE id IN ' . $in);
+            $stmt->execute($args);
+            $ids = array_map('intval', $stmt->fetchAll(\PDO::FETCH_COLUMN));
+        }
+        if (!$ids) {
+            $errors['ids'] = 'Select at least one account.';
+        }
+        if ($errors) {
+            $_SESSION['errors'] = $errors;
+            $_SESSION['old'] = ['action' => $action, 'ids' => $ids];
+            $this->redirect($back);
+        }
+
+        if ($action === 'delete') {
+            // The single delete's logic: an account still used by other tables is deactivated instead.
+            $auth = new AuthController();
+            $deleted = 0;
+            foreach ($ids as $id) {
+                if ($auth->deleteOrDeactivate($id)) {
+                    $deleted++;
+                }
+            }
+            $kept = count($ids) - $deleted;
+            $message = $deleted > 0 ? self::accounts($deleted) . ' deleted.' : '';
+            if ($kept > 0) {
+                $message .= ' ' . self::accounts($kept) . ($kept === 1
+                    ? ' is still used by other records (shop, orders...), so it is deactivated instead.'
+                    : ' are still used by other records (shop, orders...), so they are deactivated instead.');
+            }
+            flash('success', trim($message));
+        } else {
+            [$in, $args] = $this->inList($ids);
+            $stmt = $this->db->prepare('UPDATE users SET is_active = :active WHERE id IN ' . $in);
+            $stmt->execute($args + ['active' => $action === 'activate' ? 1 : 0]);
+            flash('success', self::accounts(count($ids)) . ($action === 'activate' ? ' activated.' : ' deactivated.'));
+        }
+        $this->redirect($back);
+    }
+
+    /** "(:id0, :id1, ...)" and its parameters ['id0' => 5, 'id1' => 9, ...]: one named parameter per id, never the id in the SQL. */
+    private function inList(array $ids): array
+    {
+        $names = [];
+        $args = [];
+        foreach (array_values($ids) as $i => $id) {
+            $names[] = ':id' . $i;
+            $args['id' . $i] = $id;
+        }
+        return ['(' . implode(', ', $names) . ')', $args];
+    }
+
+    /** "1 account" / "3 accounts". */
+    private static function accounts(int $n): string
+    {
+        return $n . ' account' . ($n === 1 ? '' : 's');
     }
 
     // =================================================================================================
