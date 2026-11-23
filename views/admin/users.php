@@ -2,7 +2,8 @@
 /**
  * S1 - Administrator: accounts. Only the page content.
  * Variables: $users (User\UserModel[], this page), $roles [role => label], $filters (role, status, q, sort, dir),
- * $total (accounts matching the filters), $page, $pages, $me (my id).
+ * $total (accounts matching the filters), $page, $pages, $me (my id),
+ * $bulkActions [action => label], $errors and $old of the bulk bar (S2 Youssef Mili).
  */
 $pageTitle = 'Users';
 require VIEW_PATH . '/partials/back-title.php';
@@ -54,10 +55,35 @@ $sortLink = static function (string $key, string $label) use ($filters, $link): 
       <a class="sky-link text-sm font-medium" href="<?= e(route('admin-users')) ?>">Clear the filters</a>
     <?php endif; ?>
   </form>
+  <?php if ($users) : ?>
+    <?php /* Bulk bar (S2). The row checkboxes join this form with form="bulkForm" (forms cannot be nested). */ ?>
+    <form method="post" id="bulkForm" action="<?= e(route('admin-users-bulk', array_filter($filters + ['p' => $page], static fn ($v) => $v !== ''))) ?>" class="flex flex-wrap items-end gap-3 border-t border-gray-100 px-5 py-4 sm:px-6 dark:border-white/5" novalidate data-validate>
+      <?= csrf_field() ?>
+      <div>
+        <label class="<?= $ui['label'] ?>" for="bulkAction">Action</label>
+        <select class="<?= $field('action') ?>" id="bulkAction" name="action" data-required<?= isset($errors['action']) ? ' aria-invalid="true" aria-describedby="action-error"' : '' ?>>
+          <option value="">Choose an action</option>
+          <?php foreach ($bulkActions as $key => $label) : ?>
+            <option value="<?= e($key) ?>" <?= $key === ($old['action'] ?? '') ? 'selected' : '' ?>><?= e($label) ?></option>
+          <?php endforeach; ?>
+        </select>
+        <?= $error('action') ?>
+      </div>
+      <button type="submit" class="<?= $ui['outline'] ?>" id="bulkApply" data-confirm="Apply this action to the selected accounts?">Apply</button>
+      <span class="text-sm text-gray-500 dark:text-gray-400" id="bulkCount" aria-live="polite"></span>
+      <?php if (isset($errors['ids'])) : ?>
+        <div class="w-full"><?= $error('ids') ?></div>
+      <?php endif; ?>
+    </form>
+  <?php endif; ?>
   <div class="max-w-full overflow-x-auto">
     <table class="min-w-full">
       <thead class="border-y border-gray-100 dark:border-white/5">
         <tr>
+          <th class="<?= $ui['th'] ?>">
+            <label class="sr-only" for="bulkAll">Select all the accounts of this page</label>
+            <input type="checkbox" class="size-4" id="bulkAll">
+          </th>
           <th class="<?= $ui['th'] ?>"><?= $sortLink('name', 'User') ?></th>
           <th class="<?= $ui['th'] ?>">Role</th>
           <th class="<?= $ui['th'] ?>">Status</th>
@@ -68,10 +94,14 @@ $sortLink = static function (string $key, string $label) use ($filters, $link): 
       </thead>
       <tbody class="divide-y divide-gray-100 dark:divide-white/5">
         <?php if (!$users) : ?>
-          <tr><td colspan="6" class="px-5 py-6 text-center text-sm text-gray-500 sm:px-6 dark:text-gray-400">No account matches these filters.</td></tr>
+          <tr><td colspan="7" class="px-5 py-6 text-center text-sm text-gray-500 sm:px-6 dark:text-gray-400">No account matches these filters.</td></tr>
         <?php endif; ?>
         <?php foreach ($users as $u) : ?>
           <tr class="transition hover:bg-gray-50/50 dark:hover:bg-white/2">
+            <td class="px-5 py-4 text-start sm:px-6">
+              <label class="sr-only" for="bulk<?= (int) $u->getId() ?>">Select <?= e($u->getFullName()) ?></label>
+              <input type="checkbox" class="size-4" id="bulk<?= (int) $u->getId() ?>" name="ids[]" value="<?= (int) $u->getId() ?>" form="bulkForm" data-bulk-row <?= in_array($u->getId(), $old['ids'] ?? [], true) ? 'checked' : '' ?>>
+            </td>
             <td class="px-5 py-4 text-start sm:px-6">
               <a class="<?= $ui['strong'] ?> sky-link" href="<?= e(route('admin-user', ['id' => $u->getId()])) ?>"><?= e($u->getFullName()) ?></a>
               <span class="<?= $ui['small'] ?>"><?= e($u->getEmail()) ?></span>
