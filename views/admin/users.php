@@ -81,8 +81,10 @@ $sortLink = static function (string $key, string $label) use ($filters, $link): 
       <thead class="border-y border-gray-100 dark:border-white/5">
         <tr>
           <th class="<?= $ui['th'] ?>">
-            <label class="sr-only" for="bulkAll">Select all the accounts of this page</label>
-            <input type="checkbox" class="size-4" id="bulkAll">
+            <?php if ($users) : ?>
+              <label class="sr-only" for="bulkAll">Select all the accounts of this page</label>
+              <input type="checkbox" class="size-4" id="bulkAll">
+            <?php endif; ?>
           </th>
           <th class="<?= $ui['th'] ?>"><?= $sortLink('name', 'User') ?></th>
           <th class="<?= $ui['th'] ?>">Role</th>
