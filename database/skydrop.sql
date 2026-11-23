@@ -38,6 +38,22 @@ CREATE TABLE IF NOT EXISTS login_attempts (
     KEY idx_login_attempts_email (email, attempted_at)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- Forgotten password (S5 Karim, grid item 1.3): one reset link per row. Only the SHA-256 hash of the token is stored,
+-- never the token itself. A link expires after 30 minutes and works once (used_at is set when it is used).
+-- user_id is INT UNSIGNED like users.id: a foreign key needs the same type on both sides.
+CREATE TABLE IF NOT EXISTS password_resets (
+    id         INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    user_id    INT UNSIGNED NOT NULL,
+    token_hash CHAR(64)     NOT NULL,
+    expires_at DATETIME     NOT NULL,
+    used_at    DATETIME     NULL,
+    created_at DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (id),
+    UNIQUE KEY uq_password_resets_token (token_hash),
+    KEY idx_password_resets_user (user_id),
+    CONSTRAINT fk_password_resets_user FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 -- ============================================================
 -- DEMO DATA
 -- ============================================================
