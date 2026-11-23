@@ -22,6 +22,8 @@ try {
 $name = str_replace('`', '', $cfg['name']);
 $pdo->exec("CREATE DATABASE IF NOT EXISTS `$name` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
 $pdo->exec("USE `$name`");
+// Off while the file runs: a table may point at a table of another part that comes later in the file.
+$pdo->exec('SET FOREIGN_KEY_CHECKS = 0');
 
 $sql = (string) file_get_contents(__DIR__ . '/skydrop.sql');
 // One statement per ";" at the end of a line (no stored procedures).
@@ -37,4 +39,5 @@ foreach (preg_split('/;\s*(\R|$)/', $sql) as $statement) {
         exit(1);
     }
 }
+$pdo->exec('SET FOREIGN_KEY_CHECKS = 1');
 echo "Database `$name` is ready (database/skydrop.sql).\n";

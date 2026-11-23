@@ -16,6 +16,7 @@ $office = $office ?? 'front';
     <title><?= e($title ?? 'SKYDROP') ?></title>
     <meta name="csrf-token" content="<?= e(Csrf::token()) ?>">
     <link href="<?= e(asset('lib/bootstrap-icons/1.11/bootstrap-icons.css')) ?>" rel="stylesheet">
+    <link href="<?= e(asset('lib/leaflet/1.9/leaflet.css')) ?>" rel="stylesheet">
 <?php if ($office === 'front') : ?>
     <!-- Smooth cross-fade between customer pages (browsers that support view transitions; others just load the page). -->
     <style>@media (prefers-reduced-motion: no-preference) { @view-transition { navigation: auto; } }</style>

@@ -114,3 +114,18 @@ function slot(string $name, array $data = []): string
     }
     return $html;
 }
+
+/** Distance in km between two points (Haversine). For shops, deliveries and ad radius targeting. */
+function km(float $lat1, float $lng1, float $lat2, float $lng2): float
+{
+    $dLat = deg2rad($lat2 - $lat1);
+    $dLng = deg2rad($lng2 - $lng1);
+    $a = sin($dLat / 2) ** 2 + cos(deg2rad($lat1)) * cos(deg2rad($lat2)) * sin($dLng / 2) ** 2;
+    return 6371.0 * 2 * atan2(sqrt($a), sqrt(1 - $a));
+}
+
+/** S1 - A price in TND with 3 decimals (1 dinar = 1000 millimes), e.g. money(12.5) -> "12.500 TND". Used by every module. */
+function money(float $amount): string
+{
+    return number_format($amount, 3, '.', ' ') . ' TND';
+}
