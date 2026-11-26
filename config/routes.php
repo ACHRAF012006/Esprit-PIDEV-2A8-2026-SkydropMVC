@@ -63,7 +63,7 @@ return [
         ],
         'menu' => [
             'front' => [['shops', 'Shops']],
-            'owner' => [['owner-shop', 'My shop', 'bi-shop', ['shop_owner']]], // the page allows shop owners only (requireRole)
+            'owner' => [['owner-shop', 'My shop', 'bi-shop', ['shop_owner', 'admin']]],
             'admin' => [['admin-shops', 'Shops', 'bi-shop'], ['admin-plans', 'Plan tiers', 'bi-layers']],
         ],
         'slots' => [
