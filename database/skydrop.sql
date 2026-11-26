@@ -99,8 +99,8 @@ INSERT IGNORE INTO users (id, username, email, password, role, full_name, phone,
 (12, 'owner12', 'owner12@skydrop.test', '$2y$10$CEf2IyxlyZA4L5IhNZy.buVfkQPR/.hJM/SDAdXUdi3gubsHeaCp.', 'shop_owner', 'Owner of Pharmacie Carthage', NULL, 1, '2026-10-10 09:00:00'),
 (13, 'owner13', 'owner13@skydrop.test', '$2y$10$CEf2IyxlyZA4L5IhNZy.buVfkQPR/.hJM/SDAdXUdi3gubsHeaCp.', 'shop_owner', 'Owner of Primeur Ariana', NULL, 1, '2026-10-10 09:00:00');
 
--- Shops and plan tiers (S2 Mili): plans 1 to 3, shop 1 (user 2, approved) and shop 2 (user 5, pending) used by the
--- other parts, shops 3 to 9 for the owners 7 to 13 (several plans and statuses, to show the ranking and the rules).
+-- Shops and plan tiers (S2 Mili): plans 1 to 3, shop 1 (user 2, approved) and shop 2 (user 5, pending).
+-- The other parts use shop 1 owned by user 2: keep these ids.
 INSERT IGNORE INTO shop_plans (id, name, monthly_price, rank_weight, max_products, is_active, created_at) VALUES
 (1, 'Silver',   0.000,  1, 20,  1, '2026-10-01 09:00:00'),
 (2, 'Gold',     29.000, 2, 100, 1, '2026-10-01 09:00:00'),
@@ -108,11 +108,4 @@ INSERT IGNORE INTO shop_plans (id, name, monthly_price, rank_weight, max_product
 
 INSERT IGNORE INTO shops (id, owner_id, plan_id, name, description, address, phone, opens_at, closes_at, lat, lng, status, review_note, created_at) VALUES
 (1, 2,  2, 'Epicerie Lac',          'Groceries, dairy and fresh bread every morning.', 'Rue du Lac Leman, Les Berges du Lac, Tunis', '71123456', '07:30:00', '21:00:00', 36.838100, 10.242000, 'approved', NULL, '2026-10-12 11:00:00'),
-(2, 5,  1, 'Boulangerie Nour',      'Traditional bread and pastries.', 'Avenue de la Liberte, Tunis', '71654321', '06:00:00', '20:00:00', 36.806500, 10.181500, 'pending', NULL, '2026-10-20 14:30:00'),
-(3, 7,  1, 'Boulangerie Ennasr',    'Bread, cakes and breakfast pastries.', 'Avenue Hedi Nouira, Ennasr 2, Ariana', '70123456', '06:00:00', '19:30:00', 36.857000, 10.165000, 'approved', NULL, '2026-10-10 10:00:00'),
-(4, 8,  2, 'Librairie du Lac',      'Books, school supplies and stationery.', 'Rue du Lac Biwa, Les Berges du Lac, Tunis', '71234567', '09:00:00', '19:00:00', 36.842500, 10.240000, 'approved', NULL, '2026-10-10 10:10:00'),
-(5, 9,  3, 'Bio Market La Marsa',   'Organic fruit, vegetables and local products.', 'Rue Habib Bourguiba, La Marsa', '71345678', '08:00:00', '20:30:00', 36.878200, 10.324700, 'approved', NULL, '2026-10-10 10:20:00'),
-(6, 10, 1, 'Fleurs du Bardo',       'Flowers and plants, bouquets on order.', 'Avenue du 20 Mars, Le Bardo', '71456789', '09:00:00', '18:00:00', 36.809200, 10.134000, 'approved', NULL, '2026-10-10 10:30:00'),
-(7, 11, 2, 'Tech Corner',           'Phone accessories, chargers and small electronics.', 'Avenue Habib Bourguiba, Tunis', '+21671567890', '10:00:00', '20:00:00', 36.800000, 10.180000, 'pending', NULL, '2026-10-10 10:40:00'),
-(8, 12, 2, 'Pharmacie Carthage',    'Pharmacy and parapharmacy.', 'Avenue Habib Bourguiba, Carthage', '71678901', '08:00:00', '23:00:00', 36.852800, 10.323300, 'approved', NULL, '2026-10-10 10:50:00'),
-(9, 13, 1, 'Primeur Ariana',        'Fruit and vegetables.', 'Ariana', '70789012', '07:00:00', '19:00:00', 36.862500, 10.195600, 'rejected', 'The address is incomplete: add the street and the number.', '2026-10-10 11:00:00');
+(2, 5,  1, 'Boulangerie Nour',      'Traditional bread and pastries.', 'Avenue de la Liberte, Tunis', '71654321', '06:00:00', '20:00:00', 36.806500, 10.181500, 'pending', NULL, '2026-10-20 14:30:00');
