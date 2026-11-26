@@ -4,7 +4,7 @@
  * S2 Mili - Shop owner back office: create my shop when I have none, otherwise edit it.
  * owner_id is always Auth::id(), never a value of the form, and every UPDATE has "AND owner_id = :me".
  * Rules: name 3-80 and unique, one shop per owner, a new shop is pending, closes_at after opens_at,
- * Tunisian phone, an active plan; renaming an approved shop (or editing a rejected one) sends it back to pending.
+ * Tunisian phone, an active plan; renaming an approved shop sends it back to pending.
  */
 final class OwnerShopController extends Controller
 {
@@ -112,23 +112,18 @@ final class OwnerShopController extends Controller
             $this->redirect(route('owner-shop'));
         }
 
-        // Renaming an approved shop, or correcting a rejected one, sends it back to the administrator.
+        // Renaming an approved shop sends it back to the administrator.
         $renamed = mb_strtolower($args['name']) !== mb_strtolower($shop->getName());
-        $backToPending = ($shop->getStatus() === 'approved' && $renamed) || $shop->getStatus() === 'rejected';
+        $backToPending = $shop->getStatus() === 'approved' && $renamed;
         $status = $backToPending ? 'pending' : $shop->getStatus();
         $stmt = $this->db->prepare('UPDATE shops SET plan_id = :plan, name = :name, description = :description, address = :address,
-                phone = :phone, opens_at = :opens, closes_at = :closes, lat = :lat, lng = :lng, status = :status,
-                review_note = CASE WHEN :pending = 1 THEN NULL ELSE review_note END
+                phone = :phone, opens_at = :opens, closes_at = :closes, lat = :lat, lng = :lng, status = :status
             WHERE id = :id AND owner_id = :me');
-        $stmt->execute($args + ['status' => $status, 'pending' => $backToPending ? 1 : 0, 'id' => $shop->getId(), 'me' => $me]);
+        $stmt->execute($args + ['status' => $status, 'id' => $shop->getId(), 'me' => $me]);
 
-        if ($shop->getStatus() === 'approved' && $renamed) {
-            flash('success', 'Your shop is saved. Its new name must be approved again: it is hidden from the shop list until then.');
-        } elseif ($shop->getStatus() === 'rejected') {
-            flash('success', 'Your shop is saved and sent to an administrator again.');
-        } else {
-            flash('success', 'Your shop is saved.');
-        }
+        flash('success', $backToPending
+            ? 'Your shop is saved. Its new name must be approved again: it is hidden from the shop list until then.'
+            : 'Your shop is saved.');
         $this->redirect(route('owner-shop'));
     }
 

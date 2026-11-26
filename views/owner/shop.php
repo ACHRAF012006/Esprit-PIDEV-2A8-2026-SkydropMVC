@@ -39,7 +39,6 @@ $textarea = str_replace('h-11', 'h-auto', isset($errors['description']) ? $ui['i
       <div class="mt-3 rounded-lg bg-red-50 p-3 text-sm text-red-600 dark:bg-red-500/15 dark:text-red-400">
         <strong>Note of the administrator:</strong> <?= e((string) $shop->getReviewNote()) ?>
       </div>
-      <p class="mt-3 text-sm text-gray-500 dark:text-gray-400">Correct your shop below and save it: it is sent to an administrator again.</p>
     <?php endif; ?>
   <?php endif; ?>
 </div>

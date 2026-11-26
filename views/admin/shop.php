@@ -58,7 +58,7 @@ $textarea = str_replace('h-11', 'h-auto', $field('review_note'));
 
   <div class="<?= $ui['card'] ?> col-span-12 p-5 sm:p-6 xl:col-span-5">
     <h3 class="text-lg font-semibold text-gray-800 dark:text-white/90"><?= $shop->getStatus() === 'rejected' ? 'Change the review note' : 'Reject this shop' ?></h3>
-    <p class="<?= $ui['help'] ?>">The shop is hidden from customers. Its owner reads your note on his shop page and can correct the shop.</p>
+    <p class="<?= $ui['help'] ?>">The shop is hidden from customers. Its owner reads your note on his shop page.</p>
     <form class="mt-4" method="post" action="<?= e(route('admin-shop-reject', ['id' => $shop->getId()])) ?>" novalidate data-validate>
       <?= csrf_field() ?>
       <label class="<?= $ui['label'] ?>" for="review_note">Review note</label>
