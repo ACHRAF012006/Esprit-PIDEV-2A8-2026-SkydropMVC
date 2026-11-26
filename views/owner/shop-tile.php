@@ -29,9 +29,9 @@ $statusClass = [
     </div>
     <div class="flex flex-col items-start gap-2">
       <?php if ($shop !== null) : ?>
-        <span class="inline-flex h-6 w-fit items-center rounded-lg px-2.5 py-0.5 text-sm font-medium whitespace-nowrap <?= $statusClass[$shop->getStatus()] ?? '' ?>"><?= e($shop->getStatusLabel()) ?></span>
+        <span class="inline-flex h-6 w-fit items-center rounded-lg px-2.5 py-0.5 text-sm font-medium whitespace-nowrap <?= e((string) ($statusClass[$shop->getStatus()] ?? '')) ?>"><?= e($shop->getStatusLabel()) ?></span>
       <?php endif; ?>
-      <a href="<?= e(route('owner-shop')) ?>" class="sky-link text-sm font-medium"><?= $shop === null ? 'Create my shop' : 'Open my shop' ?></a>
+      <a href="<?= e(route('owner-shop')) ?>" class="sky-link text-sm font-medium"><?= e((string) ($shop === null ? 'Create my shop' : 'Open my shop')) ?></a>
     </div>
   </div>
 </div>

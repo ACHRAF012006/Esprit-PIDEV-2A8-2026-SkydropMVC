@@ -10,7 +10,7 @@ $pending = (new AdminShopController())->countPending();
   <div class="flex flex-wrap items-end justify-between gap-3">
     <div>
       <span class="ds-metric-label text-sm text-gray-500 dark:text-gray-400"><i class="bi bi-shop" aria-hidden="true"></i>Shops waiting for approval</span>
-      <h4 class="mt-2 text-title-sm font-bold text-gray-800 dark:text-white/90"><?= (int) $pending ?></h4>
+      <h4 class="mt-2 text-title-sm font-bold text-gray-800 dark:text-white/90"><?= e((string) ((int) $pending)) ?></h4>
     </div>
     <a href="<?= e(route('admin-shops', ['status' => 'pending'])) ?>" class="sky-link text-sm font-medium">View</a>
   </div>

@@ -19,13 +19,13 @@ require VIEW_PATH . '/partials/page-banner.php';
         </form>
 
         <div class="ds-section-head">
-            <h2 class="h5"><?= count($shops) ?> shop<?= count($shops) === 1 ? '' : 's' ?><?= $q !== '' ? ' for "' . e($q) . '"' : '' ?></h2>
+            <h2 class="h5"><?= e((string) (count($shops))) ?> shop<?= e((string) (count($shops) === 1 ? '' : 's')) ?><?= e($q !== '' ? ' for "' . $q . '"' : '') ?></h2>
         </div>
 
         <?php if (!$shops) : ?>
             <div class="ds-empty">
                 <h2 class="h5">No shop found</h2>
-                <p class="ds-muted mb-0"><?= $q !== '' ? 'No approved shop has this name. Try another word.' : 'No shop is approved yet.' ?></p>
+                <p class="ds-muted mb-0"><?= e((string) ($q !== '' ? 'No approved shop has this name. Try another word.' : 'No shop is approved yet.')) ?></p>
             </div>
         <?php else : ?>
             <div class="row g-3">
