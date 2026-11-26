@@ -79,13 +79,13 @@ final class AdminShopController extends Controller
         $this->redirect(route('admin-shop', ['id' => $shop->getId()]));
     }
 
-    /** Rejecting needs a review note (5 to 255 characters), shown to the owner on his shop page. */
+    /** Rejecting needs a review note (at most 255 characters, the column size), shown to the owner on his shop page. */
     public function reject(string $id): void
     {
         Auth::requireRole('admin');
         Csrf::check();
         $shop = $this->find((int) $id) ?? abort(404);
-        $v = (new Validator($_POST))->required('review_note')->minLen('review_note', 5)->maxLen('review_note', 255);
+        $v = (new Validator($_POST))->required('review_note')->maxLen('review_note', 255);
         if ($v->fails()) {
             $_SESSION['errors'] = $v->errors();
             $_SESSION['old'] = ['review_note' => (string) ($_POST['review_note'] ?? '')];
@@ -97,22 +97,13 @@ final class AdminShopController extends Controller
         $this->redirect(route('admin-shop', ['id' => $shop->getId()]));
     }
 
-    /** A shop still used by other rows (products, orders... foreign key error 1451) cannot be deleted: reject it instead. */
     public function delete(string $id): void
     {
         Auth::requireRole('admin');
         Csrf::check();
         $shop = $this->find((int) $id) ?? abort(404);
-        try {
-            $stmt = $this->db->prepare('DELETE FROM shops WHERE id = :id');
-            $stmt->execute(['id' => $shop->getId()]);
-        } catch (\PDOException $ex) {
-            if ((int) ($ex->errorInfo[1] ?? 0) !== 1451) {
-                throw $ex;
-            }
-            flash('error', $shop->getName() . ' is still used by other records (products, orders...), so it cannot be deleted. Reject it instead.');
-            $this->redirect(route('admin-shop', ['id' => $shop->getId()]));
-        }
+        $stmt = $this->db->prepare('DELETE FROM shops WHERE id = :id');
+        $stmt->execute(['id' => $shop->getId()]);
         flash('success', $shop->getName() . ' is deleted.');
         $this->redirect(route('admin-shops'));
     }

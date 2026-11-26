@@ -68,8 +68,8 @@ $textarea = str_replace('h-11', 'h-auto', $field('review_note'));
     <form class="mt-4" method="post" action="<?= e(route('admin-shop-reject', ['id' => $shop->getId()])) ?>" novalidate data-validate>
       <?= csrf_field() ?>
       <label class="<?= $ui['label'] ?>" for="review_note">Review note</label>
-      <textarea class="<?= $textarea ?>" id="review_note" name="review_note" rows="4" data-required data-min-length="5" data-max-length="255" maxlength="255"><?= e((string) ($old['review_note'] ?? $shop->getReviewNote() ?? '')) ?></textarea>
-      <?= $error('review_note', 'Required: 5 to 255 characters, for example what to correct.') ?>
+      <textarea class="<?= $textarea ?>" id="review_note" name="review_note" rows="4" data-required data-max-length="255" maxlength="255"><?= e((string) ($old['review_note'] ?? $shop->getReviewNote() ?? '')) ?></textarea>
+      <?= $error('review_note', 'Required, at most 255 characters.') ?>
       <button type="submit" class="<?= $ui['outline'] ?> mt-4">Reject with this note</button>
     </form>
   </div>
