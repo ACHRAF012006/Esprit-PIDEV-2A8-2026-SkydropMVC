@@ -4,7 +4,7 @@
  * S2 Mili - Shop owner back office: create my shop when I have none, otherwise edit it.
  * owner_id is always Auth::id(), never a value of the form, and every UPDATE has "AND owner_id = :me".
  * Rules: name 3-80 and unique, one shop per owner, a new shop is pending, closes_at after opens_at,
- * Tunisian phone, an active plan; renaming an approved shop sends it back to pending.
+ * Tunisian phone when one is given, an active plan; renaming an approved shop sends it back to pending.
  */
 final class OwnerShopController extends Controller
 {
@@ -55,11 +55,10 @@ final class OwnerShopController extends Controller
             ->required('name')->minLen('name', 3)->maxLen('name', 80)
             ->maxLen('description', 500)
             ->required('address')->minLen('address', 5)->maxLen('address', 160)
-            ->required('phone')
             ->required('opens_at')
             ->required('closes_at')
-            ->required('lat')->decimal('lat', -90, 90)
-            ->required('lng')->decimal('lng', -180, 180)
+            ->decimal('lat', -90, 90)
+            ->decimal('lng', -180, 180)
             ->required('plan_id')->in('plan_id', array_map(static fn (ShopPlanModel $p): string => (string) $p->getId(), $plans));
         $errors = $v->errors();
 
@@ -69,7 +68,7 @@ final class OwnerShopController extends Controller
                 $errors[$field] = "Number out of range $range.";
             }
         }
-        if (!isset($errors['phone']) && !preg_match('/' . self::PHONE_PATTERN . '/', $v->get('phone'))) {
+        if (!isset($errors['phone']) && $v->get('phone') !== '' && !preg_match('/' . self::PHONE_PATTERN . '/', $v->get('phone'))) {
             $errors['phone'] = self::PHONE_MESSAGE;
         }
         foreach (['opens_at', 'closes_at'] as $field) {
@@ -95,11 +94,11 @@ final class OwnerShopController extends Controller
             'name' => $v->get('name'),
             'description' => $v->get('description') !== '' ? $v->get('description') : null,
             'address' => $v->get('address'),
-            'phone' => $v->get('phone'),
+            'phone' => $v->get('phone') !== '' ? $v->get('phone') : null,
             'opens' => $opens,
             'closes' => $closes,
-            'lat' => (float) $v->get('lat'),
-            'lng' => (float) $v->get('lng'),
+            'lat' => $v->get('lat') !== '' ? (float) $v->get('lat') : null,
+            'lng' => $v->get('lng') !== '' ? (float) $v->get('lng') : null,
             'plan' => (int) $v->get('plan_id'),
         ];
 

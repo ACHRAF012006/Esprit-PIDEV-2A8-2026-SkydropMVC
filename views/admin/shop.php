@@ -25,10 +25,16 @@ $textarea = str_replace('h-11', 'h-auto', $field('review_note'));
     <dl class="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2">
       <div><dt class="<?= $ui['small'] ?>">Owner</dt><dd class="<?= $ui['strong'] ?>"><a class="sky-link" href="<?= e(route('admin-user', ['id' => $shop->getOwnerId()])) ?>">@<?= e($shop->getOwnerUsername()) ?></a></dd></div>
       <div><dt class="<?= $ui['small'] ?>">Plan</dt><dd class="<?= $ui['strong'] ?>"><?= e($shop->getPlanName()) ?> (weight <?= (int) $shop->getRankWeight() ?>)</dd></div>
-      <div><dt class="<?= $ui['small'] ?>">Phone</dt><dd class="<?= $ui['strong'] ?>"><?= e($shop->getPhone()) ?></dd></div>
+      <div><dt class="<?= $ui['small'] ?>">Phone</dt><dd class="<?= $ui['strong'] ?>"><?= e($shop->getPhone() ?? 'Not given') ?></dd></div>
       <div><dt class="<?= $ui['small'] ?>">Hours</dt><dd class="<?= $ui['strong'] ?>"><?= e(substr($shop->getOpensAt(), 0, 5)) ?> to <?= e(substr($shop->getClosesAt(), 0, 5)) ?></dd></div>
       <div><dt class="<?= $ui['small'] ?>">Address</dt><dd class="<?= $ui['strong'] ?>"><?= e($shop->getAddress()) ?></dd></div>
-      <div><dt class="<?= $ui['small'] ?>">Position</dt><dd class="<?= $ui['strong'] ?>"><?= e(number_format($shop->getLat(), 6)) ?>, <?= e(number_format($shop->getLng(), 6)) ?> <span class="simulation-badge">Simulation</span></dd></div>
+      <div><dt class="<?= $ui['small'] ?>">Position</dt><dd class="<?= $ui['strong'] ?>">
+        <?php if ($shop->getLat() !== null && $shop->getLng() !== null) : ?>
+          <?= e(number_format($shop->getLat(), 6)) ?>, <?= e(number_format($shop->getLng(), 6)) ?> <span class="simulation-badge">Simulation</span>
+        <?php else : ?>
+          Not given
+        <?php endif; ?>
+      </dd></div>
     </dl>
     <div class="mt-4">
       <p class="<?= $ui['small'] ?>">Description</p>

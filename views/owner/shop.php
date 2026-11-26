@@ -66,10 +66,10 @@ $textarea = str_replace('h-11', 'h-auto', isset($errors['description']) ? $ui['i
         <?= $error('plan_id', 'A higher plan shows your shop earlier in the list.') ?>
       </div>
       <div>
-        <label class="<?= $ui['label'] ?>" for="phone">Phone</label>
-        <input class="<?= $field('phone') ?>" type="tel" id="phone" name="phone" data-required
+        <label class="<?= $ui['label'] ?>" for="phone">Phone (optional)</label>
+        <input class="<?= $field('phone') ?>" type="tel" id="phone" name="phone"
                data-pattern="<?= e($phonePattern) ?>" data-pattern-message="<?= e($phoneMessage) ?>"
-               value="<?= e($value('phone', $shop ? $shop->getPhone() : '')) ?>" maxlength="20" autocomplete="tel">
+               value="<?= e($value('phone', $shop ? (string) $shop->getPhone() : '')) ?>" maxlength="20" autocomplete="tel">
         <?= $error('phone', '8 digits, optionally after +216, without spaces.') ?>
       </div>
       <div>
@@ -93,15 +93,15 @@ $textarea = str_replace('h-11', 'h-auto', isset($errors['description']) ? $ui['i
         <?= $error('closes_at', 'Must be after the opening time.') ?>
       </div>
       <div>
-        <label class="<?= $ui['label'] ?>" for="lat">Latitude</label>
-        <input class="<?= $field('lat') ?>" type="text" inputmode="decimal" id="lat" name="lat" data-required data-number data-min="-90" data-max="90"
-               value="<?= e($value('lat', $shop ? (string) $shop->getLat() : '')) ?>" maxlength="12">
+        <label class="<?= $ui['label'] ?>" for="lat">Latitude (optional)</label>
+        <input class="<?= $field('lat') ?>" type="text" inputmode="decimal" id="lat" name="lat" data-number data-min="-90" data-max="90"
+               value="<?= e($value('lat', $shop && $shop->getLat() !== null ? (string) $shop->getLat() : '')) ?>" maxlength="12">
         <?= $error('lat', 'For example 36.8381 (Tunis). Right-click the place on openstreetmap.org to read it.') ?>
       </div>
       <div>
-        <label class="<?= $ui['label'] ?>" for="lng">Longitude</label>
-        <input class="<?= $field('lng') ?>" type="text" inputmode="decimal" id="lng" name="lng" data-required data-number data-min="-180" data-max="180"
-               value="<?= e($value('lng', $shop ? (string) $shop->getLng() : '')) ?>" maxlength="12">
+        <label class="<?= $ui['label'] ?>" for="lng">Longitude (optional)</label>
+        <input class="<?= $field('lng') ?>" type="text" inputmode="decimal" id="lng" name="lng" data-number data-min="-180" data-max="180"
+               value="<?= e($value('lng', $shop && $shop->getLng() !== null ? (string) $shop->getLng() : '')) ?>" maxlength="12">
         <?= $error('lng', 'For example 10.2420 (Tunis).') ?>
       </div>
     </div>
