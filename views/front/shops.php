@@ -1,7 +1,7 @@
 <?php
 /**
  * S2 Mili - Front office: the approved shops, higher plan first (ShopController::index). Only the page content.
- * Variables: $shops (ShopModel[]), $q (search text).
+ * Variables: $shops (ShopModel[]), $q (search text), $errors (q => message when the search is too long).
  */
 $bannerTitle = 'Shops';
 $bannerLead = 'Local shops approved on SKYDROP. Shops with a higher plan are shown first.';
@@ -11,7 +11,8 @@ require VIEW_PATH . '/partials/page-banner.php';
         <form class="ds-search mb-4" method="get" action="<?= e(route('shops')) ?>" role="search" novalidate data-validate>
             <input type="hidden" name="page" value="shops">
             <label class="visually-hidden" for="shopSearch">Search a shop by name</label>
-            <input class="form-control" type="search" id="shopSearch" name="q" value="<?= e($q) ?>" placeholder="Search a shop by name" data-max-length="80">
+            <input class="form-control <?= e(isset($errors['q']) ? 'is-invalid' : '') ?>" type="search" id="shopSearch" name="q" value="<?= e($q) ?>" placeholder="Search a shop by name" data-max-length="80">
+            <?php if (isset($errors['q'])) : ?><div class="invalid-feedback"><?= e($errors['q']) ?></div><?php endif; ?>
             <button class="btn btn-primary" type="submit">Search</button>
             <?php if ($q !== '') : ?>
                 <a class="btn btn-outline" href="<?= e(route('shops')) ?>">Clear</a>
@@ -19,7 +20,7 @@ require VIEW_PATH . '/partials/page-banner.php';
         </form>
 
         <div class="ds-section-head">
-            <h2 class="h5"><?= e((string) (count($shops))) ?> shop<?= e((string) (count($shops) === 1 ? '' : 's')) ?><?= e($q !== '' ? ' for "' . $q . '"' : '') ?></h2>
+            <h2 class="h5"><?= e((string) (count($shops))) ?> shop<?= e((string) (count($shops) === 1 ? '' : 's')) ?><?= e($q !== '' && !isset($errors['q']) ? ' for "' . $q . '"' : '') ?></h2>
         </div>
 
         <?php if (!$shops) : ?>

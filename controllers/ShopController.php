@@ -27,14 +27,17 @@ final class ShopController extends Controller
     // PAGES
     // =================================================================================================
 
-    /** GET /shops: approved shops, higher plan weight first, then by name; optional search by name (?q=). */
+    /** GET /shops: approved shops, higher plan weight first, then by name; optional search by name (?q=, at most 80). */
     public function index(): void
     {
-        $q = trim(mb_substr((string) ($_GET['q'] ?? ''), 0, 80));
+        $v = (new Validator(['q' => is_string($_GET['q'] ?? null) ? $_GET['q'] : '']))->maxLen('q', 80);
+        $errors = $v->errors();
+        $q = $v->get('q');
         $this->render('front/shops', [
             'title' => 'Shops | SKYDROP',
-            'shops' => $this->findApprovedList($q),
+            'shops' => $this->findApprovedList($errors ? '' : $q),
             'q' => $q,
+            'errors' => $errors,
         ]);
     }
 
