@@ -1,8 +1,7 @@
 <?php
 /**
  * S2 Mili - Administrator: the shops with their plan and owner (JOIN shop_plans and users), filtered by status.
- * Only the page content. Variables: $shops (ShopModel[]), $status (filter, '' = all), $statuses [key => label],
- * $counts [status => number of shops].
+ * Only the page content. Variables: $shops (ShopModel[]), $status (filter, '' = all), $statuses [key => label].
  */
 $pageTitle = 'Shops';
 require VIEW_PATH . '/partials/back-title.php';
@@ -14,18 +13,17 @@ $statusClass = [
 ];
 ?>
 <div class="<?= $ui['card'] ?>">
-  <div class="flex flex-wrap items-center justify-between gap-3 px-5 py-4 sm:px-6">
+  <div class="px-5 py-4 sm:px-6">
     <h3 class="text-lg font-semibold text-gray-800 dark:text-white/90"><?= count($shops) ?> shop<?= count($shops) === 1 ? '' : 's' ?></h3>
-    <a class="<?= $ui['outline'] ?>" href="<?= e(route('admin-plans')) ?>"><i class="bi bi-layers" aria-hidden="true"></i> Plan tiers</a>
   </div>
   <form method="get" action="<?= e(route('admin-shops')) ?>" class="flex flex-wrap items-end gap-3 border-t border-gray-100 px-5 py-4 sm:px-6 dark:border-white/5" novalidate data-validate>
     <input type="hidden" name="page" value="admin-shops">
     <div>
       <label class="<?= $ui['label'] ?>" for="shopStatus">Status</label>
       <select class="<?= $ui['input'] ?>" id="shopStatus" name="status">
-        <option value="">All statuses (<?= (int) array_sum($counts) ?>)</option>
+        <option value="">All statuses</option>
         <?php foreach ($statuses as $key => $label) : ?>
-          <option value="<?= e($key) ?>" <?= $key === $status ? 'selected' : '' ?>><?= e($label) ?> (<?= (int) $counts[$key] ?>)</option>
+          <option value="<?= e($key) ?>" <?= $key === $status ? 'selected' : '' ?>><?= e($label) ?></option>
         <?php endforeach; ?>
       </select>
     </div>

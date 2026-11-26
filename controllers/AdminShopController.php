@@ -45,7 +45,6 @@ final class AdminShopController extends Controller
             'shops' => array_map([ShopModel::class, 'fromArray'], $stmt->fetchAll()),
             'status' => $status,
             'statuses' => ShopModel::STATUSES,
-            'counts' => $this->countByStatus(),
         ]);
     }
 
@@ -122,16 +121,12 @@ final class AdminShopController extends Controller
     // DATA ACCESS (also used by the admin overview tile views/admin/shop-approvals.php)
     // =================================================================================================
 
-    /** status => number of shops (every status, 0 when none). */
-    public function countByStatus(): array
+    /** Number of shops waiting for approval. */
+    public function countPending(): int
     {
-        $out = array_fill_keys(array_keys(ShopModel::STATUSES), 0);
-        $stmt = $this->db->prepare('SELECT status, COUNT(*) AS n FROM shops GROUP BY status');
-        $stmt->execute();
-        foreach ($stmt->fetchAll() as $row) {
-            $out[$row['status']] = (int) $row['n'];
-        }
-        return $out;
+        $stmt = $this->db->prepare('SELECT COUNT(*) FROM shops WHERE status = :status');
+        $stmt->execute(['status' => 'pending']);
+        return (int) $stmt->fetchColumn();
     }
 
     private function find(int $id): ?ShopModel
