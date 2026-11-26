@@ -43,4 +43,32 @@ return [
         ],
         'slots' => [],
     ],
+    // Shops and plan tiers (S2 Mili)
+    'shop' => [
+        'label' => 'Shops',
+        'routes' => [
+            ['GET', '/shops', [ShopController::class, 'index'], 'shops'],
+            ['GET', '/shops/{id}', [ShopController::class, 'show'], 'shop'],
+            ['GET', '/owner/shop', [OwnerShopController::class, 'form'], 'owner-shop'],
+            ['POST', '/owner/shop', [OwnerShopController::class, 'save'], 'owner-shop'],
+            ['GET', '/admin/shops', [AdminShopController::class, 'index'], 'admin-shops'],
+            ['GET', '/admin/shops/{id}', [AdminShopController::class, 'show'], 'admin-shop'],
+            ['POST', '/admin/shops/{id}/approve', [AdminShopController::class, 'approve'], 'admin-shop-approve'],
+            ['POST', '/admin/shops/{id}/reject', [AdminShopController::class, 'reject'], 'admin-shop-reject'],
+            ['POST', '/admin/shops/{id}/delete', [AdminShopController::class, 'delete'], 'admin-shop-delete'],
+            ['GET', '/admin/plans', [AdminPlanController::class, 'index'], 'admin-plans'],
+            ['GET', '/admin/plans/form', [AdminPlanController::class, 'form'], 'admin-plan-form'],
+            ['POST', '/admin/plans/form', [AdminPlanController::class, 'save'], 'admin-plan-form'],
+            ['POST', '/admin/plans/{id}/delete', [AdminPlanController::class, 'delete'], 'admin-plan-delete'],
+        ],
+        'menu' => [
+            'front' => [['shops', 'Shops']],
+            'owner' => [['owner-shop', 'My shop', 'bi-shop', ['shop_owner']]], // the page allows shop owners only (requireRole)
+            'admin' => [['admin-shops', 'Shops', 'bi-shop'], ['admin-plans', 'Plan tiers', 'bi-layers']],
+        ],
+        'slots' => [
+            'owner-dashboard' => ['owner/shop-tile'],
+            'admin-dashboard' => ['admin/shop-approvals'],
+        ],
+    ],
 ];
