@@ -38,8 +38,6 @@ require VIEW_PATH . '/partials/page-banner.php';
                                     <span class="ds-tag"><?= e($shop->getPlanName()) ?></span>
                                     <?php if ($shop->isOpenNow()) : ?>
                                         <span class="ds-tag ds-tag-ok">Open now</span>
-                                    <?php else : ?>
-                                        <span class="ds-tag ds-tag-muted">Closed now</span>
                                     <?php endif; ?>
                                 </p>
                                 <ul class="ds-meta">

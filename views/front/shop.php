@@ -19,8 +19,6 @@ $hasPosition = $shop->getLat() !== null && $shop->getLng() !== null;
                             <span class="ds-tag"><?= e($shop->getPlanName()) ?> plan</span>
                             <?php if ($shop->isOpenNow()) : ?>
                                 <span class="ds-tag ds-tag-ok">Open now</span>
-                            <?php else : ?>
-                                <span class="ds-tag ds-tag-muted">Closed now</span>
                             <?php endif; ?>
                         </p>
                         <?php if ($shop->getDescription() !== null) : ?>
