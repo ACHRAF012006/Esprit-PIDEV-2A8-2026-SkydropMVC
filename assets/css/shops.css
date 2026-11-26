@@ -1,0 +1,13 @@
+/* S2 Mili - Shops and plan tiers: the small map of a shop page (front/shop.php). */
+.shop-map { height: 260px; overflow: hidden; }
+.shop-map-fallback {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    margin: 0;
+    padding: var(--ds-space-2, 16px);
+    color: var(--ds-muted, #57534e);
+    font-size: var(--ds-text-sm, 14px);
+    text-align: center;
+}
