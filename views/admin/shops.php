@@ -35,7 +35,7 @@ $statusClass = [
     <?php endif; ?>
   </form>
   <div class="max-w-full overflow-x-auto">
-    <table class="min-w-full">
+    <table class="min-w-full ds-table">
       <thead class="border-y border-gray-100 dark:border-white/5">
         <tr>
           <th class="<?= $ui['th'] ?>">Shop</th>

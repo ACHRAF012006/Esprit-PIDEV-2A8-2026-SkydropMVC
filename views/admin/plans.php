@@ -16,7 +16,7 @@ require View::file('partials/user-ui');
     <a class="<?= $ui['primary'] ?>" href="<?= e(route('admin-plan-form')) ?>"><i class="bi bi-plus-lg" aria-hidden="true"></i> Add a plan</a>
   </div>
   <div class="max-w-full overflow-x-auto">
-    <table class="min-w-full">
+    <table class="min-w-full ds-table">
       <thead class="border-y border-gray-100 dark:border-white/5">
         <tr>
           <th class="<?= $ui['th'] ?>">Plan</th>
