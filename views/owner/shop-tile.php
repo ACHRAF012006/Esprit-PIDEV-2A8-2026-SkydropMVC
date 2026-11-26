@@ -1,6 +1,6 @@
 <?php
 /**
- * S2 Mili - Tile of the owner overview (slot "owner-dashboard"): my shop's status, plan and review note.
+ * S2 Mili - Tile of the owner overview (slot "owner-dashboard"): my shop's status.
  * Shown to shop owners only. The overview page belongs to another part and passes only $user to its slot,
  * so this tile reads my shop with ShopController::ofOwner() (the SQL stays in the controller).
  * Variables: $user (UserModel, the signed-in account).
@@ -25,9 +25,6 @@ $statusClass = [
       <?php else : ?>
         <h4 class="mt-2 text-lg font-semibold text-gray-800 dark:text-white/90"><?= e($shop->getName()) ?></h4>
         <p class="mt-1 text-sm text-gray-500 dark:text-gray-400"><?= e($shop->getPlanName()) ?> plan</p>
-        <?php if ($shop->getStatus() === 'rejected' && $shop->getReviewNote() !== null) : ?>
-          <p class="mt-2 text-sm text-red-600 dark:text-red-400">Note of the administrator: <?= e($shop->getReviewNote()) ?></p>
-        <?php endif; ?>
       <?php endif; ?>
     </div>
     <div class="flex flex-col items-start gap-2">
