@@ -2,6 +2,8 @@
 .shop-map { height: 260px; overflow: hidden; }
 .shop-map-fallback {
     display: flex;
+    flex-direction: column;
+    gap: 4px;
     align-items: center;
     justify-content: center;
     height: 100%;
