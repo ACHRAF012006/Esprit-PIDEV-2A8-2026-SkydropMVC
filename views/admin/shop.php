@@ -27,7 +27,7 @@ $textarea = str_replace('h-11', 'h-auto', $field('review_note'));
       <div><dt class="<?= $ui['small'] ?>">Plan</dt><dd class="<?= $ui['strong'] ?>"><?= e($shop->getPlanName()) ?> (weight <?= (int) $shop->getRankWeight() ?>)</dd></div>
       <div><dt class="<?= $ui['small'] ?>">Phone</dt><dd class="<?= $ui['strong'] ?>"><?= e($shop->getPhone() ?? 'Not given') ?></dd></div>
       <div><dt class="<?= $ui['small'] ?>">Hours</dt><dd class="<?= $ui['strong'] ?>"><?= e(substr($shop->getOpensAt(), 0, 5)) ?> to <?= e(substr($shop->getClosesAt(), 0, 5)) ?></dd></div>
-      <div><dt class="<?= $ui['small'] ?>">Address</dt><dd class="<?= $ui['strong'] ?>"><?= e($shop->getAddress()) ?></dd></div>
+      <div><dt class="<?= $ui['small'] ?>">Address</dt><dd class="<?= $ui['strong'] ?>"><?= e($shop->getAddress() ?? 'Not given') ?></dd></div>
       <div><dt class="<?= $ui['small'] ?>">Position</dt><dd class="<?= $ui['strong'] ?>">
         <?php if ($shop->getLat() !== null && $shop->getLng() !== null) : ?>
           <?= e(number_format($shop->getLat(), 6)) ?>, <?= e(number_format($shop->getLng(), 6)) ?> <span class="simulation-badge">Simulation</span>

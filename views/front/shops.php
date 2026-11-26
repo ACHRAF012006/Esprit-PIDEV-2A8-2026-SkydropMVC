@@ -43,7 +43,9 @@ require VIEW_PATH . '/partials/page-banner.php';
                                     <?php endif; ?>
                                 </p>
                                 <ul class="ds-meta">
-                                    <li><i class="bi bi-geo-alt" aria-hidden="true"></i><?= e($shop->getAddress()) ?></li>
+                                    <?php if ($shop->getAddress() !== null) : ?>
+                                        <li><i class="bi bi-geo-alt" aria-hidden="true"></i><?= e($shop->getAddress()) ?></li>
+                                    <?php endif; ?>
                                     <li><i class="bi bi-clock" aria-hidden="true"></i><?= e(substr($shop->getOpensAt(), 0, 5)) ?> to <?= e(substr($shop->getClosesAt(), 0, 5)) ?></li>
                                 </ul>
                             </div>

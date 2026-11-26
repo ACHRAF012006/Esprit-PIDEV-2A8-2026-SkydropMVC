@@ -31,7 +31,9 @@ $hasPosition = $shop->getLat() !== null && $shop->getLng() !== null;
                             <?php if ($shop->getPhone() !== null) : ?>
                                 <div><dt>Phone</dt><dd><a href="tel:<?= e($shop->getPhone()) ?>"><?= e($shop->getPhone()) ?></a></dd></div>
                             <?php endif; ?>
-                            <div><dt>Address</dt><dd><?= e($shop->getAddress()) ?></dd></div>
+                            <?php if ($shop->getAddress() !== null) : ?>
+                                <div><dt>Address</dt><dd><?= e($shop->getAddress()) ?></dd></div>
+                            <?php endif; ?>
                         </dl>
                     </div>
                 </div>

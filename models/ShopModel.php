@@ -20,7 +20,7 @@ final class ShopModel
     private int $planId = 0;
     private string $name = '';
     private ?string $description = null;
-    private string $address = '';
+    private ?string $address = null;
     private ?string $phone = null;
     private string $opensAt = '';
     private string $closesAt = '';
@@ -39,7 +39,7 @@ final class ShopModel
     public function getPlanId(): int { return $this->planId; }
     public function getName(): string { return $this->name; }
     public function getDescription(): ?string { return $this->description; }
-    public function getAddress(): string { return $this->address; }
+    public function getAddress(): ?string { return $this->address; }
     public function getPhone(): ?string { return $this->phone; }
     public function getOpensAt(): string { return $this->opensAt; }
     public function getClosesAt(): string { return $this->closesAt; }
@@ -61,7 +61,7 @@ final class ShopModel
     public function setPlanId(int $planId): void { $this->planId = $planId; }
     public function setName(string $name): void { $this->name = $name; }
     public function setDescription(?string $description): void { $this->description = $description; }
-    public function setAddress(string $address): void { $this->address = $address; }
+    public function setAddress(?string $address): void { $this->address = $address; }
     public function setPhone(?string $phone): void { $this->phone = $phone; }
     public function setOpensAt(string $opensAt): void { $this->opensAt = $opensAt; }
     public function setClosesAt(string $closesAt): void { $this->closesAt = $closesAt; }
@@ -84,7 +84,7 @@ final class ShopModel
         $shop->setPlanId((int) ($row['plan_id'] ?? 0));
         $shop->setName((string) ($row['name'] ?? ''));
         $shop->setDescription(isset($row['description']) && $row['description'] !== '' ? (string) $row['description'] : null);
-        $shop->setAddress((string) ($row['address'] ?? ''));
+        $shop->setAddress(isset($row['address']) && $row['address'] !== '' ? (string) $row['address'] : null);
         $shop->setPhone(isset($row['phone']) && $row['phone'] !== '' ? (string) $row['phone'] : null);
         $shop->setOpensAt((string) ($row['opens_at'] ?? ''));
         $shop->setClosesAt((string) ($row['closes_at'] ?? ''));

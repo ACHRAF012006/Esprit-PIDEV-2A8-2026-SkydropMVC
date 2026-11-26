@@ -60,7 +60,7 @@ CREATE TABLE IF NOT EXISTS shops (
     plan_id     INT UNSIGNED  NOT NULL,
     name        VARCHAR(80)   NOT NULL,
     description VARCHAR(500)  NULL,
-    address     VARCHAR(160)  NOT NULL,
+    address     VARCHAR(160)  NULL,
     phone       VARCHAR(20)   NULL,
     opens_at    TIME          NOT NULL,
     closes_at   TIME          NOT NULL,

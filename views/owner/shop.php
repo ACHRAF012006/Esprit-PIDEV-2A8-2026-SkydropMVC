@@ -73,9 +73,9 @@ $textarea = str_replace('h-11', 'h-auto', isset($errors['description']) ? $ui['i
         <?= $error('phone', '8 digits, optionally after +216, without spaces.') ?>
       </div>
       <div>
-        <label class="<?= $ui['label'] ?>" for="address">Address</label>
-        <input class="<?= $field('address') ?>" type="text" id="address" name="address" data-required data-min-length="5" data-max-length="160"
-               value="<?= e($value('address', $shop ? $shop->getAddress() : '')) ?>" maxlength="160" autocomplete="street-address">
+        <label class="<?= $ui['label'] ?>" for="address">Address (optional)</label>
+        <input class="<?= $field('address') ?>" type="text" id="address" name="address" data-max-length="160"
+               value="<?= e($value('address', $shop ? (string) $shop->getAddress() : '')) ?>" maxlength="160" autocomplete="street-address">
         <?= $error('address') ?>
       </div>
       <div>

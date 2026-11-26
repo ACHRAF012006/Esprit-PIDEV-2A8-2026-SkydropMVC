@@ -54,7 +54,7 @@ final class OwnerShopController extends Controller
         $v = (new Validator($_POST))
             ->required('name')->minLen('name', 3)->maxLen('name', 80)
             ->maxLen('description', 500)
-            ->required('address')->minLen('address', 5)->maxLen('address', 160)
+            ->maxLen('address', 160)
             ->required('opens_at')
             ->required('closes_at')
             ->decimal('lat', -90, 90)
@@ -93,7 +93,7 @@ final class OwnerShopController extends Controller
         $args = [
             'name' => $v->get('name'),
             'description' => $v->get('description') !== '' ? $v->get('description') : null,
-            'address' => $v->get('address'),
+            'address' => $v->get('address') !== '' ? $v->get('address') : null,
             'phone' => $v->get('phone') !== '' ? $v->get('phone') : null,
             'opens' => $opens,
             'closes' => $closes,
