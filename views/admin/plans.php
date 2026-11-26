@@ -1,6 +1,6 @@
 <?php
 /**
- * S2 Mili - Administrator: the plan tiers with their number of shops (LEFT JOIN shops). Only the page content.
+ * S2 Mili - Administrator: the plan tiers. Only the page content.
  * Variables: $plans (ShopPlanModel[], highest weight first).
  */
 $pageTitle = 'Plan tiers';
@@ -23,14 +23,13 @@ require View::file('partials/user-ui');
           <th class="<?= $ui['th'] ?>">Monthly price</th>
           <th class="<?= $ui['th'] ?>">Weight</th>
           <th class="<?= $ui['th'] ?>">Max products</th>
-          <th class="<?= $ui['th'] ?>">Shops</th>
           <th class="<?= $ui['th'] ?>">Status</th>
           <th class="<?= $ui['th'] ?>">Actions</th>
         </tr>
       </thead>
       <tbody class="divide-y divide-gray-100 dark:divide-white/5">
         <?php if (!$plans) : ?>
-          <tr><td colspan="7" class="px-5 py-6 text-center text-sm text-gray-500 sm:px-6 dark:text-gray-400">No plan yet.</td></tr>
+          <tr><td colspan="6" class="px-5 py-6 text-center text-sm text-gray-500 sm:px-6 dark:text-gray-400">No plan yet.</td></tr>
         <?php endif; ?>
         <?php foreach ($plans as $plan) : ?>
           <tr class="transition hover:bg-gray-50/50 dark:hover:bg-white/2">
@@ -38,7 +37,6 @@ require View::file('partials/user-ui');
             <td class="<?= $ui['td'] ?>"><?= e(number_format($plan->getMonthlyPrice(), 3)) ?> TND</td>
             <td class="<?= $ui['td'] ?>"><?= (int) $plan->getRankWeight() ?></td>
             <td class="<?= $ui['td'] ?>"><?= (int) $plan->getMaxProducts() ?></td>
-            <td class="<?= $ui['td'] ?>"><?= (int) $plan->getShopCount() ?></td>
             <td class="px-5 py-4 text-start sm:px-6">
               <span class="<?= $ui['badge'] ?> <?= $ui['status'][$plan->isActive() ? 'active' : 'deactivated'] ?>"><?= $plan->isActive() ? 'Active' : 'Inactive' ?></span>
             </td>

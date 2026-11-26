@@ -1,7 +1,7 @@
 <?php
 /**
  * S2 Mili - Administrator: add or edit a plan tier. Only the page content.
- * Variables: $plan (?ShopPlanModel, null = new plan), $pricePattern, $priceMessage (same rule as AdminPlanController),
+ * Variables: $plan (?ShopPlanModel, null = new plan), $maxPrice (largest DECIMAL(10,3) value, as in AdminPlanController),
  * $errors, $old.
  */
 $pageTitle = $plan ? 'Edit the plan ' . $plan->getName() : 'Add a plan';
@@ -17,27 +17,26 @@ $active = $old ? isset($old['is_active']) : ($plan ? $plan->isActive() : true);
     <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
       <div>
         <label class="<?= $ui['label'] ?>" for="name">Name</label>
-        <input class="<?= $field('name') ?>" type="text" id="name" name="name" data-required data-min-length="3" data-max-length="40"
+        <input class="<?= $field('name') ?>" type="text" id="name" name="name" data-required data-max-length="40"
                value="<?= e($value('name', $plan ? $plan->getName() : '')) ?>" maxlength="40" autocomplete="off">
-        <?= $error('name', '3 to 40 characters, not used by another plan.') ?>
+        <?= $error('name', 'At most 40 characters, not used by another plan.') ?>
       </div>
       <div>
         <label class="<?= $ui['label'] ?>" for="monthly_price">Monthly price (TND)</label>
-        <input class="<?= $field('monthly_price') ?>" type="text" inputmode="decimal" id="monthly_price" name="monthly_price" data-required data-number data-min="0"
-               data-pattern="<?= e($pricePattern) ?>" data-pattern-message="<?= e($priceMessage) ?>"
+        <input class="<?= $field('monthly_price') ?>" type="text" inputmode="decimal" id="monthly_price" name="monthly_price" data-required data-number data-min="0" data-max="<?= e((string) $maxPrice) ?>"
                value="<?= e($value('monthly_price', $plan ? number_format($plan->getMonthlyPrice(), 3, '.', '') : '')) ?>" maxlength="11">
-        <?= $error('monthly_price', '0 or more, for example 29.000. 0.000 is a free plan.') ?>
+        <?= $error('monthly_price', '0 or more, for example 29.000.') ?>
       </div>
       <div>
         <label class="<?= $ui['label'] ?>" for="rank_weight">Rank weight</label>
-        <input class="<?= $field('rank_weight') ?>" type="text" inputmode="numeric" id="rank_weight" name="rank_weight" data-required data-max-length="6" data-integer data-min="0"
-               value="<?= e($value('rank_weight', $plan ? (string) $plan->getRankWeight() : '')) ?>" maxlength="6">
-        <?= $error('rank_weight', 'A whole number, 0 or more. Higher = the shops of this plan are shown first.') ?>
+        <input class="<?= $field('rank_weight') ?>" type="text" inputmode="numeric" id="rank_weight" name="rank_weight" data-required data-max-length="9" data-integer
+               value="<?= e($value('rank_weight', $plan ? (string) $plan->getRankWeight() : '')) ?>" maxlength="9">
+        <?= $error('rank_weight', 'A whole number. Higher = the shops of this plan are shown first.') ?>
       </div>
       <div>
         <label class="<?= $ui['label'] ?>" for="max_products">Max products</label>
-        <input class="<?= $field('max_products') ?>" type="text" inputmode="numeric" id="max_products" name="max_products" data-required data-max-length="6" data-integer data-min="1"
-               value="<?= e($value('max_products', $plan ? (string) $plan->getMaxProducts() : '')) ?>" maxlength="6">
+        <input class="<?= $field('max_products') ?>" type="text" inputmode="numeric" id="max_products" name="max_products" data-required data-max-length="9" data-integer data-min="1"
+               value="<?= e($value('max_products', $plan ? (string) $plan->getMaxProducts() : '')) ?>" maxlength="9">
         <?= $error('max_products', 'A whole number, 1 or more.') ?>
       </div>
     </div>

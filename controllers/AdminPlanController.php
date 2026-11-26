@@ -1,18 +1,17 @@
 <?php
 
 /**
- * S2 Mili - Administrator: the plan tiers (shop_plans). List with the number of shops of each plan
- * (LEFT JOIN shops), add, edit, delete. Rules: name 3-40 and unique, price >= 0, max_products >= 1,
- * a plan still used by a shop cannot be deleted (deactivate it instead).
+ * S2 Mili - Administrator: the plan tiers (shop_plans). List, add, edit, delete.
+ * Rules: name unique, price >= 0, max_products >= 1, a plan still used by a shop cannot be deleted
+ * (deactivate it instead). The other limits are the sizes of the columns (VARCHAR(40), DECIMAL(10,3), INT).
  */
 final class AdminPlanController extends Controller
 {
     protected string $layout = 'admin';
     private \PDO $db;
 
-    /** Same pattern and message in the view (data-pattern) and here: at most 7 digits and 3 decimals (DECIMAL(10,3)). */
-    public const PRICE_PATTERN = '^[0-9]{1,7}(\.[0-9]{1,3})?$';
-    public const PRICE_MESSAGE = 'Write a price such as 29.000 (at most 3 decimals).';
+    /** Largest value of DECIMAL(10,3). */
+    public const MAX_PRICE = 9999999.999;
 
     private const FIELDS = ['name', 'monthly_price', 'rank_weight', 'max_products', 'is_active'];
 
@@ -21,15 +20,11 @@ final class AdminPlanController extends Controller
         $this->db = \Database::getConnexion();
     }
 
-    /** GET /admin/plans: every plan, highest weight first, with its number of shops. */
+    /** GET /admin/plans: every plan, highest weight first. */
     public function index(): void
     {
         Auth::requireRole('admin');
-        $stmt = $this->db->prepare('SELECT p.*, COUNT(s.id) AS shop_count
-            FROM shop_plans p
-            LEFT JOIN shops s ON s.plan_id = p.id
-            GROUP BY p.id
-            ORDER BY p.rank_weight DESC, p.name ASC');
+        $stmt = $this->db->prepare('SELECT * FROM shop_plans ORDER BY rank_weight DESC, name ASC');
         $stmt->execute();
         $this->render('admin/plans', [
             'title' => 'Plan tiers | SKYDROP Admin',
@@ -48,8 +43,7 @@ final class AdminPlanController extends Controller
         $this->render('admin/plan-form', [
             'title' => ($plan ? 'Edit ' . $plan->getName() : 'Add a plan') . ' | SKYDROP Admin',
             'plan' => $plan,
-            'pricePattern' => self::PRICE_PATTERN,
-            'priceMessage' => self::PRICE_MESSAGE,
+            'maxPrice' => self::MAX_PRICE,
             'errors' => $errors,
             'old' => $old,
         ]);
@@ -64,14 +58,16 @@ final class AdminPlanController extends Controller
         $plan = $id > 0 ? ($this->find($id) ?? abort(404)) : null;
 
         // The order of the rules is the order of forms.js, so both give the same first message.
+        // maxLen 9 on the whole numbers keeps them inside the INT column.
         $v = (new Validator($_POST))
-            ->required('name')->minLen('name', 3)->maxLen('name', 40)
-            ->required('monthly_price')->decimal('monthly_price', 0)
-            ->required('rank_weight')->maxLen('rank_weight', 6)->int('rank_weight', 0)
-            ->required('max_products')->maxLen('max_products', 6)->int('max_products', 1);
+            ->required('name')->maxLen('name', 40)
+            ->required('monthly_price')->decimal('monthly_price', 0, self::MAX_PRICE)
+            ->required('rank_weight')->maxLen('rank_weight', 9)->int('rank_weight')
+            ->required('max_products')->maxLen('max_products', 9)->int('max_products', 1);
         $errors = $v->errors();
-        if (!isset($errors['monthly_price']) && !preg_match('/' . self::PRICE_PATTERN . '/', $v->get('monthly_price'))) {
-            $errors['monthly_price'] = self::PRICE_MESSAGE;
+        // forms.js adds the range to "Number out of range" when there is a min and a max: same message here.
+        if (($errors['monthly_price'] ?? '') === 'Number out of range.') {
+            $errors['monthly_price'] = 'Number out of range (0 to ' . self::MAX_PRICE . ').';
         }
         if (!isset($errors['name']) && $this->nameTaken($v->get('name'), $id)) {
             $errors['name'] = 'Another plan already uses this name.';
