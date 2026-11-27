@@ -43,4 +43,34 @@ return [
         ],
         'slots' => [],
     ],
+    // Cart and orders (S4 Zamel)
+    'order' => [
+        'label' => 'Orders',
+        'routes' => [
+            ['GET', '/cart', [CartController::class, 'index'], 'cart'],
+            ['POST', '/cart/add', [CartController::class, 'add'], 'cart-add'],
+            ['POST', '/cart/update', [CartController::class, 'update'], 'cart-update'],
+            ['POST', '/cart/remove', [CartController::class, 'remove'], 'cart-remove'],
+            ['POST', '/cart/empty', [CartController::class, 'clear'], 'cart-empty'],
+            ['GET', '/checkout', [OrderController::class, 'checkoutForm'], 'checkout'],
+            ['POST', '/checkout', [OrderController::class, 'checkout'], 'checkout'],
+            ['GET', '/orders', [OrderController::class, 'index'], 'my-orders'],
+            ['GET', '/orders/{id}', [OrderController::class, 'show'], 'order'],
+            ['POST', '/orders/{id}/cancel', [OrderController::class, 'cancel'], 'order-cancel'],
+            ['GET', '/owner/orders', [OwnerOrderController::class, 'index'], 'owner-orders'],
+            ['GET', '/owner/orders/{id}', [OwnerOrderController::class, 'show'], 'owner-order'],
+            ['POST', '/owner/orders/{id}/status', [OwnerOrderController::class, 'advance'], 'owner-order-status'],
+            ['GET', '/admin/orders', [AdminOrderController::class, 'index'], 'admin-orders'],
+            ['GET', '/admin/orders/{id}', [AdminOrderController::class, 'show'], 'admin-order'],
+            ['POST', '/admin/orders/{id}/delete', [AdminOrderController::class, 'delete'], 'admin-order-delete'],
+        ],
+        'menu' => [
+            'front' => [['cart', 'Cart', ['customer']], ['my-orders', 'My orders', ['customer']]],
+            'owner' => [['owner-orders', 'Orders', 'bi-receipt', ['shop_owner']]],
+            'admin' => [['admin-orders', 'Orders', 'bi-receipt']],
+        ],
+        'slots' => [
+            'profile' => ['front/profile-orders'],
+        ],
+    ],
 ];
