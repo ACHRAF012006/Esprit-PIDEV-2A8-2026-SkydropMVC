@@ -1,0 +1,7 @@
+/* S4 Zamel - Cart and orders: the few rules the design system does not have. Loaded by the order pages only. */
+.order-note { min-height: 110px; }
+.order-steps { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.order-steps li { color: var(--ds-muted); font-size: var(--ds-text-sm); }
+.order-steps li + li::before { content: "/"; margin-right: 8px; color: var(--ds-faint); }
+.order-steps .is-done { color: var(--ds-text); }
+.order-steps .is-current { color: var(--ds-text); font-weight: 600; }
