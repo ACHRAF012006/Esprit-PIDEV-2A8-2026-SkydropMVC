@@ -1,0 +1,16 @@
+/*
+ * S5 Karim - Ads and placements: the few styles the TailAdmin classes do not cover.
+ * Loaded by OwnerAdController and AdminAdController with 'pageStyles' => ['css/ads.css'].
+ */
+
+/* A text area with the look of the template's inputs, but taller than one line. */
+.office-back .ads-textarea {
+    height: auto;
+    min-height: 7.5rem;
+    resize: vertical;
+    line-height: 1.5;
+}
+
+/* Price preview of the ad form and preview of an ad in the admin detail. */
+.office-back .ads-price output { margin: 2px 0; font-variant-numeric: tabular-nums; }
+.office-back .ads-preview { overflow-wrap: anywhere; white-space: pre-line; }
