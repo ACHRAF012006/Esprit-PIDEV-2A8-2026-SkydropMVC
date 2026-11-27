@@ -38,6 +38,43 @@ CREATE TABLE IF NOT EXISTS login_attempts (
     KEY idx_login_attempts_email (email, attempted_at)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- Ads and placements (S5 Karim)
+-- A placement is a place of the site where text ads are shown (home banner, search results), with its price per day
+-- and the number of ads shown there at the same time (max_ads).
+CREATE TABLE IF NOT EXISTS ad_placements (
+    id            INT UNSIGNED  NOT NULL AUTO_INCREMENT,
+    name          VARCHAR(60)   NOT NULL,
+    description   VARCHAR(255)  NOT NULL DEFAULT '',
+    price_per_day DECIMAL(10,3) NOT NULL,
+    max_ads       INT UNSIGNED  NOT NULL DEFAULT 1,
+    is_active     TINYINT(1)    NOT NULL DEFAULT 1,
+    created_at    TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (id),
+    UNIQUE KEY uq_ad_placements_name (name)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- A text ad of an advertiser (or shop owner) on one placement, between two dates. total_price is computed by the server
+-- (days x price_per_day). An administrator approves or rejects it; a rejected ad keeps the reason in review_note.
+CREATE TABLE IF NOT EXISTS ads (
+    id            INT UNSIGNED  NOT NULL AUTO_INCREMENT,
+    advertiser_id INT UNSIGNED  NOT NULL,
+    placement_id  INT UNSIGNED  NOT NULL,
+    title         VARCHAR(80)   NOT NULL,
+    body          VARCHAR(300)  NOT NULL,
+    link          VARCHAR(255)  NULL,
+    starts_at     DATE          NOT NULL,
+    ends_at       DATE          NOT NULL,
+    total_price   DECIMAL(10,3) NOT NULL,
+    status        ENUM('pending', 'approved', 'rejected') NOT NULL DEFAULT 'pending',
+    review_note   VARCHAR(255)  NULL,
+    created_at    TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (id),
+    KEY idx_ads_advertiser (advertiser_id),
+    KEY idx_ads_placement_running (placement_id, status, starts_at, ends_at),
+    CONSTRAINT fk_ads_advertiser FOREIGN KEY (advertiser_id) REFERENCES users (id) ON DELETE RESTRICT,
+    CONSTRAINT fk_ads_placement FOREIGN KEY (placement_id) REFERENCES ad_placements (id) ON DELETE RESTRICT
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 -- ============================================================
 -- DEMO DATA
 -- ============================================================
@@ -59,3 +96,18 @@ INSERT IGNORE INTO users (id, username, email, password, role, full_name, phone,
 (11, 'owner11', 'owner11@skydrop.test', '$2y$10$CEf2IyxlyZA4L5IhNZy.buVfkQPR/.hJM/SDAdXUdi3gubsHeaCp.', 'shop_owner', 'Owner of Tech Corner', NULL, 1, '2026-10-10 09:00:00'),
 (12, 'owner12', 'owner12@skydrop.test', '$2y$10$CEf2IyxlyZA4L5IhNZy.buVfkQPR/.hJM/SDAdXUdi3gubsHeaCp.', 'shop_owner', 'Owner of Pharmacie Carthage', NULL, 1, '2026-10-10 09:00:00'),
 (13, 'owner13', 'owner13@skydrop.test', '$2y$10$CEf2IyxlyZA4L5IhNZy.buVfkQPR/.hJM/SDAdXUdi3gubsHeaCp.', 'shop_owner', 'Owner of Primeur Ariana', NULL, 1, '2026-10-10 09:00:00');
+
+-- Ads and placements (S5 Karim): two placements, then three ads of the demo advertiser (id 4).
+-- The ad dates follow the day of the install, so ad 1 is always running now.
+INSERT IGNORE INTO ad_placements (id, name, description, price_per_day, max_ads, is_active, created_at) VALUES
+(1, 'Home banner',    'Text ads under the search box of the home page.', 12.000, 2, 1, '2026-11-01 09:00:00'),
+(2, 'Search results', 'Text ads above the products found by a search.',    8.000, 3, 1, '2026-11-01 09:00:00');
+
+INSERT IGNORE INTO ads (id, advertiser_id, placement_id, title, body, link, starts_at, ends_at, total_price, status, review_note, created_at) VALUES
+(1, 4, 1, 'Fresh bread every morning', 'Boulangerie Ennasr bakes bread, croissants and cakes from 6 am. Order before 9 am and pick it up warm.',
+    'https://boulangerie-ennasr.skydrop.test', CURDATE() - INTERVAL 3 DAY, CURDATE() + INTERVAL 20 DAY, 288.000, 'approved', NULL, '2026-11-20 10:00:00'),
+(2, 4, 1, 'Winter school supplies', 'Notebooks, pens and school bags for the second term at Librairie du Lac. Ten percent off the full list.',
+    NULL, CURDATE() + INTERVAL 5 DAY, CURDATE() + INTERVAL 14 DAY, 120.000, 'pending', NULL, '2026-11-25 15:30:00'),
+(3, 4, 2, 'Best prices in Tunisia', 'The cheapest phones of the whole country, guaranteed, with free delivery everywhere today only.',
+    'https://tech-corner.skydrop.test', CURDATE() + INTERVAL 2 DAY, CURDATE() + INTERVAL 8 DAY, 56.000, 'rejected',
+    'The text promises prices and a free delivery that the shop cannot prove. Write the real offer and send a new ad.', '2026-11-22 09:15:00');
