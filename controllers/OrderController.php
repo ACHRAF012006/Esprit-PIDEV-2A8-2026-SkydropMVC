@@ -38,6 +38,7 @@ final class OrderController extends Controller
         $this->render('front/checkout', [
             'title' => 'Checkout | SKYDROP',
             'activeMenu' => 'cart',
+            'pageStyles' => ['css/orders.css'],
             'couponsReady' => class_exists('CouponController'),
             'payments' => self::PAYMENTS,
             'errors' => $errors,
@@ -170,6 +171,7 @@ final class OrderController extends Controller
         $this->render('front/order', [
             'title' => 'Order #' . $order->getId() . ' | SKYDROP',
             'activeMenu' => 'my-orders',
+            'pageStyles' => ['css/orders.css'],
             'order' => $order,
             'items' => $this->items($order->getId()),
         ]);
