@@ -38,6 +38,42 @@ CREATE TABLE IF NOT EXISTS login_attempts (
     KEY idx_login_attempts_email (email, attempted_at)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- Cart and orders (S4 Zamel): one order = one customer and one shop; its lines are in order_items (the cart itself
+-- lives in the session, no table). The name and price of each product are copied into order_items when the order is
+-- placed, so an old order keeps showing what was really bought even if the product changes later.
+CREATE TABLE IF NOT EXISTS orders (
+    id             INT UNSIGNED  NOT NULL AUTO_INCREMENT,
+    customer_id    INT UNSIGNED  NOT NULL,
+    shop_id        INT UNSIGNED  NOT NULL,
+    status         ENUM('placed', 'preparing', 'ready', 'delivered', 'cancelled') NOT NULL DEFAULT 'placed',
+    subtotal       DECIMAL(10,3) NOT NULL,
+    discount       DECIMAL(10,3) NOT NULL DEFAULT 0,
+    total          DECIMAL(10,3) NOT NULL,
+    coupon_code    VARCHAR(30)   NULL,
+    payment_status ENUM('unpaid', 'paid') NOT NULL DEFAULT 'unpaid',
+    note           VARCHAR(300)  NULL,
+    placed_at      DATETIME      NOT NULL,
+    updated_at     TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (id),
+    KEY idx_orders_customer (customer_id),
+    KEY idx_orders_shop (shop_id, status),
+    CONSTRAINT fk_orders_customer FOREIGN KEY (customer_id) REFERENCES users (id),
+    CONSTRAINT fk_orders_shop FOREIGN KEY (shop_id) REFERENCES shops (id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS order_items (
+    id           INT UNSIGNED  NOT NULL AUTO_INCREMENT,
+    order_id     INT UNSIGNED  NOT NULL,
+    product_id   INT UNSIGNED  NOT NULL,
+    product_name VARCHAR(120)  NOT NULL,
+    unit_price   DECIMAL(10,3) NOT NULL,
+    quantity     INT           NOT NULL,
+    PRIMARY KEY (id),
+    KEY idx_order_items_order (order_id),
+    CONSTRAINT fk_order_items_order FOREIGN KEY (order_id) REFERENCES orders (id) ON DELETE CASCADE,
+    CONSTRAINT fk_order_items_product FOREIGN KEY (product_id) REFERENCES products (id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 -- ============================================================
 -- DEMO DATA
 -- ============================================================
@@ -59,3 +95,13 @@ INSERT IGNORE INTO users (id, username, email, password, role, full_name, phone,
 (11, 'owner11', 'owner11@skydrop.test', '$2y$10$CEf2IyxlyZA4L5IhNZy.buVfkQPR/.hJM/SDAdXUdi3gubsHeaCp.', 'shop_owner', 'Owner of Tech Corner', NULL, 1, '2026-10-10 09:00:00'),
 (12, 'owner12', 'owner12@skydrop.test', '$2y$10$CEf2IyxlyZA4L5IhNZy.buVfkQPR/.hJM/SDAdXUdi3gubsHeaCp.', 'shop_owner', 'Owner of Pharmacie Carthage', NULL, 1, '2026-10-10 09:00:00'),
 (13, 'owner13', 'owner13@skydrop.test', '$2y$10$CEf2IyxlyZA4L5IhNZy.buVfkQPR/.hJM/SDAdXUdi3gubsHeaCp.', 'shop_owner', 'Owner of Primeur Ariana', NULL, 1, '2026-10-10 09:00:00');
+
+-- Cart and orders (S4 Zamel): two orders of the demo customer (id 3) in shop 1, with lines of products 1 to 3.
+INSERT IGNORE INTO orders (id, customer_id, shop_id, status, subtotal, discount, total, coupon_code, payment_status, note, placed_at) VALUES
+(1, 3, 1, 'delivered', 3.500, 0, 3.500, NULL, 'paid', 'Please ring twice.', '2026-11-10 10:15:00'),
+(2, 3, 1, 'placed', 3.750, 0, 3.750, NULL, 'unpaid', NULL, '2026-11-25 18:40:00');
+INSERT IGNORE INTO order_items (id, order_id, product_id, product_name, unit_price, quantity) VALUES
+(1, 1, 1, 'Fresh milk 1 L', 1.350, 2),
+(2, 1, 2, 'Baguette', 0.200, 4),
+(3, 2, 3, 'Eggs, box of 6', 2.400, 1),
+(4, 2, 1, 'Fresh milk 1 L', 1.350, 1);
