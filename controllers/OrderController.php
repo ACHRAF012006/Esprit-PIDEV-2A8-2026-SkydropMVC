@@ -15,6 +15,9 @@ final class OrderController extends Controller
     /** Payment choices of the checkout => label. */
     public const PAYMENTS = ['now' => 'Pay now', 'pickup' => 'Pay on pickup'];
 
+    /** The only move allowed from each status: forward, one step. 'delivered' and 'cancelled' have none. */
+    public const NEXT = ['placed' => 'preparing', 'preparing' => 'ready', 'ready' => 'delivered'];
+
     private \PDO $db;
 
     public function __construct()
@@ -280,6 +283,17 @@ final class OrderController extends Controller
             'ready', 'preparing' => 'ds-tag ds-tag-warn',
             'cancelled' => 'ds-tag ds-tag-danger',
             default => 'ds-tag',
+        };
+    }
+
+    /** TailAdmin badge colours of each status for the back offices (light and dark theme). */
+    public static function statusBadge(string $status): string
+    {
+        return match ($status) {
+            'delivered' => 'bg-green-50 text-green-600 dark:bg-green-500/15 dark:text-green-400',
+            'ready', 'preparing' => 'bg-orange-50 text-orange-600 dark:bg-orange-500/15 dark:text-orange-400',
+            'cancelled' => 'bg-red-50 text-red-600 dark:bg-red-500/15 dark:text-red-400',
+            default => 'bg-gray-100 text-gray-800 dark:bg-white/5 dark:text-white/80',
         };
     }
 
