@@ -53,7 +53,7 @@ require View::file('partials/user-ui');
             <td class="<?= $ui['td'] ?>"><?= e(substr($o->getPlacedAt(), 0, 16)) ?></td>
             <td class="<?= $ui['td'] ?>"><?= (int) $o->getItemCount() ?></td>
             <td class="px-5 py-4 text-start sm:px-6"><span class="<?= $ui['badge'] ?> <?= e(OrderController::statusBadge($o->getStatus())) ?>"><?= e($o->getStatusLabel()) ?></span></td>
-            <td class="<?= $ui['td'] ?>"><?= e(OrderController::price($o->getTotal())) ?></td>
+            <td class="<?= $ui['td'] ?> whitespace-nowrap"><?= e(OrderController::price($o->getTotal())) ?></td>
           </tr>
         <?php endforeach; ?>
       </tbody>

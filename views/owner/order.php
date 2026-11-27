@@ -27,9 +27,9 @@ require View::file('partials/user-ui');
           <?php foreach ($items as $item) : ?>
             <tr>
               <td class="px-5 py-4 text-start sm:px-6"><span class="<?= $ui['strong'] ?>"><?= e($item->getProductName()) ?></span></td>
-              <td class="<?= $ui['td'] ?>"><?= e(OrderController::price($item->getUnitPrice())) ?></td>
+              <td class="<?= $ui['td'] ?> whitespace-nowrap"><?= e(OrderController::price($item->getUnitPrice())) ?></td>
               <td class="<?= $ui['td'] ?>"><?= (int) $item->getQuantity() ?></td>
-              <td class="<?= $ui['td'] ?>"><?= e(OrderController::price($item->getLineTotal())) ?></td>
+              <td class="<?= $ui['td'] ?> whitespace-nowrap"><?= e(OrderController::price($item->getLineTotal())) ?></td>
             </tr>
           <?php endforeach; ?>
         </tbody>
