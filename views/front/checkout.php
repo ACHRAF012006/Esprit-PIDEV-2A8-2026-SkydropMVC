@@ -53,9 +53,10 @@ $payment = (string) ($old['payment'] ?? 'pickup');
                                     <div class="form-floating">
                                         <textarea class="form-control order-note <?= $invalid('note') ?>" id="note" name="note" placeholder="Note for the shop"
                                                   data-max-length="300"><?= e((string) ($old['note'] ?? '')) ?></textarea>
-                                        <label for="note">Note for the shop (optional, 300 characters at most)</label>
+                                        <label for="note">Note for the shop (optional)</label>
                                         <?php if (isset($errors['note'])) : ?><div class="invalid-feedback"><?= e($errors['note']) ?></div><?php endif; ?>
                                     </div>
+                                    <p class="ds-muted small mt-1 mb-0">300 characters at most.</p>
                                 </div>
                             </div>
                         </div>

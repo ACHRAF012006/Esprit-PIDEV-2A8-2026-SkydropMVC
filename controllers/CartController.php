@@ -32,6 +32,7 @@ final class CartController extends Controller
         $pendingProduct = $pending ? $this->product((int) $pending['product_id']) : null;
         $this->render('front/cart', [
             'title' => 'My cart | SKYDROP',
+            'pageStyles' => ['css/orders.css'],
             'productsReady' => class_exists('ProductController'),
             'pending' => $pendingProduct ? ['product' => $pendingProduct, 'quantity' => (int) $pending['quantity']] : null,
             'errors' => $errors,

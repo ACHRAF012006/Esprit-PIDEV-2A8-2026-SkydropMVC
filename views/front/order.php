@@ -32,9 +32,9 @@ $reached = array_search($order->getStatus(), $steps, true);
                                     <?php foreach ($items as $item) : ?>
                                         <tr>
                                             <td><?= e($item->getProductName()) ?></td>
-                                            <td><?= e(OrderController::price($item->getUnitPrice())) ?></td>
+                                            <td class="order-price"><?= e(OrderController::price($item->getUnitPrice())) ?></td>
                                             <td><?= (int) $item->getQuantity() ?></td>
-                                            <td class="ds-right"><?= e(OrderController::price($item->getLineTotal())) ?></td>
+                                            <td class="ds-right order-price"><?= e(OrderController::price($item->getLineTotal())) ?></td>
                                         </tr>
                                     <?php endforeach; ?>
                                 </tbody>

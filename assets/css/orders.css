@@ -5,3 +5,4 @@
 .order-steps li + li::before { content: "/"; margin-right: 8px; color: var(--ds-faint); }
 .order-steps .is-done { color: var(--ds-text); }
 .order-steps .is-current { color: var(--ds-text); font-weight: 600; }
+.order-price { white-space: nowrap; }

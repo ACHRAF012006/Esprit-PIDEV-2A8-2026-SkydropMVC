@@ -27,7 +27,7 @@ $orders = (new OrderController())->ofCustomer($user->getId(), 3);
                                 <td><a href="<?= e(route('order', ['id' => $o->getId()])) ?>">#<?= (int) $o->getId() ?></a> <span class="ds-muted"><?= e($o->getShopName()) ?></span></td>
                                 <td><?= e(substr($o->getPlacedAt(), 0, 10)) ?></td>
                                 <td><span class="<?= e(OrderController::statusTag($o->getStatus())) ?>"><?= e($o->getStatusLabel()) ?></span></td>
-                                <td class="ds-right"><?= e(OrderController::price($o->getTotal())) ?></td>
+                                <td class="ds-right order-price"><?= e(OrderController::price($o->getTotal())) ?></td>
                             </tr>
                         <?php endforeach; ?>
                     </tbody>

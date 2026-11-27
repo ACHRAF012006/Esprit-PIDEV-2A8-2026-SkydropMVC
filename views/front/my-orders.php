@@ -29,7 +29,7 @@ require VIEW_PATH . '/partials/page-banner.php';
                                         <td><?= e(substr($o->getPlacedAt(), 0, 16)) ?></td>
                                         <td><?= (int) $o->getItemCount() ?></td>
                                         <td><span class="<?= e(OrderController::statusTag($o->getStatus())) ?>"><?= e($o->getStatusLabel()) ?></span></td>
-                                        <td class="ds-right"><?= e(OrderController::price($o->getTotal())) ?></td>
+                                        <td class="ds-right order-price"><?= e(OrderController::price($o->getTotal())) ?></td>
                                     </tr>
                                 <?php endforeach; ?>
                             </tbody>

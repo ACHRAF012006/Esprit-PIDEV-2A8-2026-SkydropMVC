@@ -74,7 +74,7 @@ require VIEW_PATH . '/partials/page-banner.php';
                                                         <button type="submit" class="btn btn-sm btn-outline">Update</button>
                                                     </form>
                                                 </td>
-                                                <td class="ds-right"><?= e(OrderController::price($item->getLineTotal())) ?></td>
+                                                <td class="ds-right order-price"><?= e(OrderController::price($item->getLineTotal())) ?></td>
                                                 <td class="ds-right">
                                                     <form method="post" action="<?= e(route('cart-remove')) ?>" class="m-0">
                                                         <?= csrf_field() ?>

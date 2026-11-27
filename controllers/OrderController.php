@@ -162,6 +162,7 @@ final class OrderController extends Controller
         Auth::requireRole('customer');
         $this->render('front/my-orders', [
             'title' => 'My orders | SKYDROP',
+            'pageStyles' => ['css/orders.css'],
             'orders' => $this->ofCustomer((int) Auth::id()),
         ]);
     }
