@@ -43,4 +43,32 @@ return [
         ],
         'slots' => [],
     ],
+    // Ads and placements (S5 Karim)
+    'ad' => [
+        'label' => 'Ads',
+        'routes' => [
+            ['GET', '/owner/ads', [OwnerAdController::class, 'index'], 'owner-ads'],
+            ['GET', '/owner/ads/form', [OwnerAdController::class, 'form'], 'owner-ad-form'],
+            ['POST', '/owner/ads/form', [OwnerAdController::class, 'save'], 'owner-ad-form'],
+            ['POST', '/owner/ads/{id}/delete', [OwnerAdController::class, 'delete'], 'owner-ad-delete'],
+            ['GET', '/admin/ads', [AdminAdController::class, 'index'], 'admin-ads'],
+            ['GET', '/admin/ads/{id}', [AdminAdController::class, 'show'], 'admin-ad'],
+            ['POST', '/admin/ads/{id}/approve', [AdminAdController::class, 'approve'], 'admin-ad-approve'],
+            ['POST', '/admin/ads/{id}/reject', [AdminAdController::class, 'reject'], 'admin-ad-reject'],
+            ['POST', '/admin/ads/{id}/delete', [AdminAdController::class, 'delete'], 'admin-ad-delete'],
+            ['GET', '/admin/placements', [AdminPlacementController::class, 'index'], 'admin-placements'],
+            ['GET', '/admin/placements/form', [AdminPlacementController::class, 'form'], 'admin-placement-form'],
+            ['POST', '/admin/placements/form', [AdminPlacementController::class, 'save'], 'admin-placement-form'],
+            ['POST', '/admin/placements/{id}/delete', [AdminPlacementController::class, 'delete'], 'admin-placement-delete'],
+        ],
+        'menu' => [
+            'front' => [],
+            'owner' => [['owner-ads', 'My ads', 'bi-megaphone', ['advertiser', 'shop_owner']]],
+            'admin' => [['admin-ads', 'Ads', 'bi-megaphone'], ['admin-placements', 'Placements', 'bi-layout-text-window']],
+        ],
+        'slots' => [
+            'home-top' => ['front/ads-home'],
+            'admin-dashboard' => ['admin/ad-approvals'],
+        ],
+    ],
 ];
