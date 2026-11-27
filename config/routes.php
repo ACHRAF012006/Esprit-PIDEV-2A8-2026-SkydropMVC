@@ -35,6 +35,10 @@ return [
             ['POST', '/admin/users/{id}/password', [AdminUserController::class, 'setPassword'], 'admin-user-password'],
             ['POST', '/admin/users/{id}/toggle', [AdminUserController::class, 'toggle'], 'admin-user-toggle'],
             ['POST', '/admin/users/{id}/role', [AdminUserController::class, 'changeRole'], 'admin-user-role'],
+            ['GET', '/password/forgot', [PasswordResetController::class, 'requestForm'], 'password-forgot'],
+            ['POST', '/password/forgot', [PasswordResetController::class, 'request'], 'password-forgot'],
+            ['GET', '/password/reset', [PasswordResetController::class, 'resetForm'], 'password-reset'],
+            ['POST', '/password/reset', [PasswordResetController::class, 'reset'], 'password-reset'],
         ],
         'menu' => [
             'front' => [],
